@@ -2,7 +2,7 @@
   "id": "zombie-universe-toolkit",
   "title": "Zombie Universe Toolkit",
   "description": "System-agnostic world entity actors for Foundry VTT: groups, vehicles, factions, and future worldbuilding tools.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "url": "https://github.com/lukaszhajdun/zombie-universe-toolkit",
   "manifest": "https://raw.githubusercontent.com/lukaszhajdun/zombie-universe-toolkit/main/module.json",
   "download": "https://github.com/lukaszhajdun/zombie-universe-toolkit/releases/latest/download/zombie-universe-toolkit.zip",
