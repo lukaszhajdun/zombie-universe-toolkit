@@ -6,3 +6,5 @@ Thumbs.db
 node_modules/
 
 *.log
+
+release-guide.md
