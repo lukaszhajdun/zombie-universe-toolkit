@@ -1,0 +1,213 @@
+:root {
+  --zut-space-1: 0.25rem;
+  --zut-space-2: 0.5rem;
+  --zut-space-3: 0.75rem;
+  --zut-space-4: 1rem;
+
+  --zut-radius-sm: 6px;
+  --zut-radius-md: 10px;
+
+  --zut-border-color: rgba(255, 255, 255, 0.16);
+  --zut-muted-text: rgba(255, 255, 255, 0.7);
+  --zut-panel-bg: rgba(0, 0, 0, 0.12);
+  --zut-drop-bg: rgba(255, 255, 255, 0.04);
+}
+
+.zombie-universe-toolkit,
+.app.zombie-universe-toolkit,
+.sheet.zombie-universe-toolkit {
+  --zut-local-space-1: var(--zut-space-1);
+  --zut-local-space-2: var(--zut-space-2);
+  --zut-local-space-3: var(--zut-space-3);
+  --zut-local-space-4: var(--zut-space-4);
+  --zut-local-radius-sm: var(--zut-radius-sm);
+  --zut-local-radius-md: var(--zut-radius-md);
+  --zut-local-border-color: var(--zut-border-color);
+  --zut-local-muted-text: var(--zut-muted-text);
+  --zut-local-panel-bg: var(--zut-panel-bg);
+}
+
+.zut-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+}
+
+.zut-inline-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--zut-space-1);
+  min-width: 1.9rem;
+  min-height: 1.9rem;
+  padding: 0;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.zut-muted {
+  color: var(--zut-muted-text);
+}
+
+.zut-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--zut-space-2) var(--zut-space-3) var(--zut-space-3);
+}
+
+.zut-sheet__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-3);
+  padding: var(--zut-space-3);
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: var(--zut-panel-bg);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.zut-sheet__section-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.zut-lock-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  min-width: 1.15rem;
+  min-height: 1.15rem;
+  padding: 0;
+  border: 1px solid var(--zut-border-color);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.zut-lock-toggle i {
+  font-size: 0.55rem;
+  line-height: 1;
+}
+
+.zut-lock-toggle.is-locked {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.zut-lock-toggle:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.zut-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-1);
+  min-width: 0;
+}
+
+.zut-field--panel {
+  flex: 1 1 auto;
+  min-height: 100%;
+}
+
+.zut-field__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.zut-field__label--section {
+  margin: 0;
+}
+
+.zut-field__input,
+.zut-field__textarea {
+  width: 100%;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+.zut-field__input {
+  min-height: 2rem;
+  padding: 0 var(--zut-space-2);
+}
+
+.zut-field__input--title {
+  min-height: 2.55rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.zut-field__textarea {
+  min-height: 7rem;
+  padding: var(--zut-space-2);
+  resize: vertical;
+}
+
+.zut-drop-zone {
+  border-radius: var(--zut-radius-sm);
+  transition: background 120ms ease, outline-color 120ms ease;
+}
+
+.zut-drop-zone.is-dragover {
+  background: var(--zut-drop-bg);
+  outline: 1px dashed var(--zut-border-color);
+  outline-offset: 0;
+}
+
+.zut-sheet__portrait {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zut-portrait-button {
+  padding: 0;
+  cursor: pointer;
+}
+
+.zut-portrait-button.is-editable:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.zut-portrait-button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.zut-sheet__portrait-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+.zut-empty-state {
+  padding: var(--zut-space-3);
+  border: 1px dashed var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+}
+
+.zut-empty-state__text {
+  margin: 0;
+  color: var(--zut-muted-text);
+}

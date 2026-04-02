@@ -1,0 +1,327 @@
+{
+  "ZUT": {
+    "ModuleTitle": "Zombie Universe Toolkit",
+    "Log": {
+      "Init": "Inicjalizacja modułu Zombie Universe Toolkit",
+      "Ready": "Moduł Zombie Universe Toolkit jest gotowy"
+    },
+    "Settings": {
+      "Debug": {
+        "Name": "Włącz logowanie debug",
+        "Hint": "Zapisuj szczegółowe komunikaty modułu Zombie Universe Toolkit w konsoli przeglądarki."
+      },
+      "DefaultLinkActorData": {
+        "Name": "Domyślne Link Actor Data dla nowych aktorów modułu",
+        "Hint": "Jeśli włączone, nowo tworzeni aktorzy modułu będą mieli w Prototype Token włączone Link Actor Data."
+      },
+      "DefaultLockArtworkRotation": {
+        "Name": "Domyślne Lock Artwork Rotation dla nowych aktorów modułu",
+        "Hint": "Jeśli włączone, nowo tworzeni aktorzy modułu będą mieli w Prototype Token włączone Lock Artwork Rotation."
+      },
+      "ActorTypes": {
+        "Group": {
+          "DefaultLinkActorData": {
+            "Name": "Group Actor: domyślne Link Actor Data",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Group będą mieli w Prototype Token włączone Link Actor Data."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Group Actor: domyślne Lock Artwork Rotation",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Group będą mieli w Prototype Token włączone Lock Artwork Rotation."
+          }
+        },
+        "Vehicle": {
+          "DefaultLinkActorData": {
+            "Name": "Vehicle Actor: domyślne Link Actor Data",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Vehicle będą mieli w Prototype Token włączone Link Actor Data."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Vehicle Actor: domyślne Lock Artwork Rotation",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Vehicle będą mieli w Prototype Token włączone Lock Artwork Rotation."
+          }
+        },
+        "Faction": {
+          "DefaultLinkActorData": {
+            "Name": "Faction Actor: domyślne Link Actor Data",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Faction będą mieli w Prototype Token włączone Link Actor Data."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Faction Actor: domyślne Lock Artwork Rotation",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Faction będą mieli w Prototype Token włączone Lock Artwork Rotation."
+          }
+        }
+      }
+    },
+    "Common": {
+      "Notes": "Notatki",
+      "Description": "Opis",
+      "Add": "Dodaj",
+      "Remove": "Usuń"
+    },
+    "Errors": {
+      "AutoSaveFailed": "Nie udało się zapisać zmian.",
+      "EditLockToggleFailed": "Nie udało się zmienić stanu blokady edycji."
+    },
+    "Group": {
+      "Members": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora",
+        "Notifications": {
+          "Added": "Aktor został dodany do grupy.",
+          "AlreadyAdded": "Ten aktor jest już w grupie.",
+          "CannotAddSelf": "Nie możesz dodać aktora grupy do samego siebie.",
+          "DropLocked": "Odblokuj edycję, aby dodawać członków.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
+          "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
+        }
+      }
+    },
+    "Faction": {
+      "KeyFigures": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora"
+      },
+      "Havens": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora"
+      },
+      "Challenges": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora"
+      },
+      "Notifications": {
+        "Added": "Aktor został dodany.",
+        "AlreadyAdded": "Ten aktor już znajduje się w tej sekcji.",
+        "CannotAddSelf": "Nie możesz dodać tej frakcji do samej siebie.",
+        "DropLocked": "Odblokuj edycję, aby dodawać aktorów.",
+        "InvalidDrop": "W tym miejscu można upuszczać tylko aktorów.",
+        "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
+      }
+    },
+    "Vehicle": {
+      "Owner": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora",
+        "Notifications": {
+          "Assigned": "Właściciel został przypisany.",
+          "DropLocked": "Odblokuj edycję, aby przypisać właściciela.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
+          "InvalidType": "Pojazd nie może zostać przypisany jako właściciel.",
+          "MissingActor": "Nie udało się odnaleźć powiązanego aktora właściciela."
+        }
+      },
+      "Passengers": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora",
+        "Notifications": {
+          "Added": "Pasażer został dodany.",
+          "AlreadyAdded": "Ten aktor jest już w pojeździe.",
+          "DropLocked": "Odblokuj edycję, aby dodawać pasażerów.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
+          "InvalidType": "Grupy, frakcje i pojazdy nie mogą być pasażerami.",
+          "Full": "W pojeździe nie ma już wolnych miejsc.",
+          "MissingActor": "Nie udało się odnaleźć powiązanego aktora pasażera.",
+          "GroupAdded": "Dozwoleni członkowie grupy zostali dodani jako pasażerowie.",
+          "GroupNoEligible": "Ta grupa nie ma żadnych kwalifikujących się członków do dodania.",
+          "GroupFull": "Ta grupa nie mieści się w dostępnych miejscach. Nie dodano żadnych pasażerów.",
+          "AlreadyDriver": "Ten aktor jest już kierowcą."
+        }
+      },
+      "Driver": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora",
+        "Notifications": {
+          "Assigned": "Kierowca został przypisany.",
+          "AlreadyAssigned": "Ten aktor jest już kierowcą.",
+          "AlreadyPassenger": "Ten aktor jest już pasażerem. Usuń go najpierw z pasażerów, aby przypisać go jako kierowcę.",
+          "Occupied": "Ten pojazd ma już kierowcę. Usuń obecnego kierowcę przed przypisaniem nowego.",
+          "DropLocked": "Odblokuj edycję, aby przypisać kierowcę.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
+          "InvalidType": "Grupy, frakcje i pojazdy nie mogą być kierowcą.",
+          "Full": "W pojeździe nie ma już wolnego miejsca dla kierowcy.",
+          "MissingActor": "Nie udało się odnaleźć powiązanego aktora kierowcy."
+        }
+      }
+    },
+    "Sheets": {
+      "Common": {
+        "Unnamed": "Nowy byt",
+        "Fields": {
+          "Name": "Nazwa"
+        },
+        "Actions": {
+          "Save": "Zapisz",
+          "LockEditing": "Zablokuj edycję",
+          "UnlockEditing": "Odblokuj edycję",
+          "EditPortrait": "Zmień portret"
+        },
+        "Controls": {
+          "PrototypeToken": "Prototype Token",
+          "PortraitArtwork": "Pokaż grafikę aktora",
+          "TokenArtwork": "Pokaż grafikę tokenu"
+        }
+      },
+      "Group": {
+        "Label": "Grupa (ZU)",
+        "Sections": {
+          "Members": "Członkowie",
+          "Description": "Opis",
+          "Notes": "Notatki"
+        },
+        "Fields": {
+          "Faction": "Frakcja",
+          "Status": "Status",
+          "Location": "Lokalizacja",
+          "MemberCount": "Członkowie"
+        },
+        "Actions": {
+          "RemoveMember": "Usuń członka"
+        },
+        "Empty": {
+          "Members": "Nie dodano jeszcze żadnych członków. Przeciągnij tutaj aktorów."
+        },
+        "Placeholders": {
+          "Name": "Nazwa grupy",
+          "Faction": "np. Wilki z autostrady",
+          "Status": "np. W podróży",
+          "Location": "np. Północna autostrada",
+          "Description": "Opisz grupę...",
+          "Notes": "Dodaj notatki do tej grupy..."
+        }
+      },
+      "Vehicle": {
+        "Label": "Pojazd (ZU)",
+        "Sections": {
+          "Passengers": "Pasażerowie",
+          "Description": "Opis",
+          "Issues": "Usterki"
+        },
+        "Fields": {
+          "Owner": "Właściciel",
+          "VehicleType": "Typ pojazdu",
+          "Seats": "Miejsca",
+          "TrunkAccessible": "Bagażnik dostępny",
+          "State": "Stan",
+          "Durability": "Wytrzymałość",
+          "Maneuverability": "Zwrotność",
+          "Damage": "Obrażenia",
+          "Armor": "Pancerz",
+          "PassengerCount": "Obłożenie",
+          "Driver": "Kierowca"
+        },
+        "Actions": {
+          "ClearOwner": "Usuń właściciela",
+          "RemovePassenger": "Usuń pasażera",
+          "ClearDriver": "Usuń kierowcę",
+          "OpenTrunk": "Otwórz bagażnik"
+        },
+        "Empty": {
+          "Owner": "Nie przypisano jeszcze właściciela. Przeciągnij tutaj aktora.",
+          "Passengers": "Nie dodano jeszcze pasażerów. Przeciągnij tutaj aktorów.",
+          "Driver": "Nie przypisano jeszcze kierowcy. Przeciągnij tutaj aktora."
+        },
+        "Placeholders": {
+          "Name": "Nazwa pojazdu",
+          "VehicleType": "np. Ciężarówka",
+          "State": "np. Sprawny",
+          "Description": "Opisz pojazd...",
+          "Issues": "Wpisz usterki, uszkodzenia i notatki serwisowe..."
+        }
+      },
+      "Faction": {
+        "Label": "Frakcja (ZU)",
+        "Sections": {
+          "KeyFigures": "Kluczowe osoby",
+          "Havens": "Przystanie",
+          "Challenges": "Wyzwania",
+          "Description": "Opis",
+          "Notes": "Notatki"
+        },
+        "Fields": {
+          "Size": "Skala",
+          "Type": "Typ",
+          "Leadership": "Przywództwo",
+          "Doctrine": "Doktryna"
+        },
+        "Actions": {
+          "RemoveKeyFigure": "Usuń kluczową osobę",
+          "RemoveHaven": "Usuń przystań",
+          "RemoveChallenge": "Usuń wyzwanie"
+        },
+        "Empty": {
+          "KeyFigures": "Nie dodano jeszcze kluczowych osób. Przeciągnij tutaj aktorów.",
+          "Havens": "Nie dodano jeszcze przystani. Przeciągnij tutaj aktorów.",
+          "Challenges": "Nie dodano jeszcze wyzwań. Przeciągnij tutaj aktorów."
+        },
+        "Placeholders": {
+          "Name": "Nazwa frakcji",
+          "Size": "np. Regionalna",
+          "Type": "np. Zakon militarny",
+          "Leadership": "np. Rada Trzech",
+          "Doctrine": "np. Ekspansja przez handel",
+          "Description": "Opisz tę frakcję...",
+          "Notes": "Dodaj notatki strategiczne i zaczepy fabularne..."
+        }
+      }
+    },
+    "Storage": {
+      "Window": {
+        "Title": "{storage} — {actor}",
+        "TitleFallback": "Magazyn"
+      },
+      "Sections": {
+        "Items": "Przedmioty"
+      },
+      "Fields": {
+        "Storage": "Magazyn",
+        "HostActor": "Aktor-host",
+        "Capacity": "Pojemność",
+        "ItemCount": "Przedmioty"
+      },
+      "Slots": {
+        "Trunk": {
+          "Label": "Bagażnik",
+          "SectionLabel": "Bagażnik"
+        },
+        "Unknown": "Magazyn"
+      },
+      "Actions": {
+        "RemoveItem": "Usuń przedmiot"
+      },
+      "Empty": {
+        "Items": "Nie przechowujesz tu jeszcze żadnych przedmiotów. Przeciągnij je tutaj.",
+        "Capacity": "—"
+      },
+      "Hints": {
+        "Locked": "Ten host jest zablokowany. Możesz przeglądać magazyn, ale zmiany w przedmiotach są wyłączone."
+      },
+      "Items": {
+        "Unnamed": "Nienazwany przedmiot"
+      },
+      "Notifications": {
+        "InvalidDrop": "W tym miejscu można upuszczać tylko przedmioty.",
+        "StorageLocked": "Odblokuj edycję hosta, aby modyfikować ten magazyn.",
+        "StorageDisabled": "Ten magazyn jest obecnie wyłączony.",
+        "ItemCopiedToStorage": "Przedmiot został skopiowany do magazynu.",
+        "ItemMovedToStorage": "Przedmiot został przeniesiony do magazynu.",
+        "ItemAlreadyInStorage": "Ten przedmiot już znajduje się w tym magazynie.",
+        "ItemRemoved": "Przedmiot został usunięty z magazynu.",
+        "MissingItem": "Nie udało się odnaleźć powiązanego przedmiotu.",
+        "ItemMovedToActor": "Przedmiot został przeniesiony z magazynu.",
+        "MoveToActorFailed": "Nie udało się przenieść przedmiotu do tego aktora.",
+        "TargetActorNotOwned": "Nie masz uprawnień, aby dodać przedmioty do tego aktora."
+      }
+    }
+  },
+  "TYPES": {
+    "Actor": {
+      "group": "Grupa",
+      "vehicle": "Pojazd",
+      "faction": "Frakcja",
+      "zombie-universe-toolkit": {
+        "group": "Grupa (ZU)",
+        "vehicle": "Pojazd (ZU)",
+        "faction": "Frakcja (ZU)"
+      }
+    }
+  }
+}

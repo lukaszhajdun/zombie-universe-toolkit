@@ -1,0 +1,10 @@
+/*
+ * Deprecated.
+ *
+ * Styles are now loaded from:
+ * - styles/base.css
+ * - styles/group-sheet.css
+ * - styles/vehicle-sheet.css
+ *
+ * Keep this file temporarily as a no-op placeholder during the CSS refactor.
+ */

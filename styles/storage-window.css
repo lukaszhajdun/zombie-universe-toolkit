@@ -1,0 +1,170 @@
+.zut-storage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-3);
+  min-width: 0;
+  min-height: 100%;
+  padding: var(--zut-space-2) var(--zut-space-3) var(--zut-space-3);
+  box-sizing: border-box;
+}
+
+.zut-storage__controls-panel,
+.zut-storage__items-panel {
+  min-width: 0;
+}
+
+.zut-storage__controls-panel {
+  gap: var(--zut-space-2);
+}
+
+.zut-storage__controls-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--zut-space-3);
+  min-width: 0;
+}
+
+.zut-storage__capacity-field {
+  width: 100%;
+  max-width: 320px;
+}
+
+.zut-storage__locked-hint {
+  margin: 0;
+}
+
+.zut-storage__items-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.zut-storage__items-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--zut-space-2);
+  margin-bottom: var(--zut-space-2);
+}
+
+.zut-storage__items-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--zut-space-2);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.zut-storage__items-body {
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  min-height: 480px;
+  min-width: 0;
+  margin-top: var(--zut-space-1);
+  overflow: auto;
+}
+
+.zut-storage__item-list {
+  width: 100%;
+  min-width: 0;
+}
+
+.zut-storage__empty-state {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.zut-storage-item {
+  min-width: 0;
+}
+
+.zut-storage-item__main {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.zut-storage .zut-passenger-card__media,
+.zut-storage .zut-storage-item__media {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  flex: 0 0 44px;
+}
+
+.zut-storage .zut-passenger-card__thumb,
+.zut-storage .zut-storage-item__thumb {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  flex: 0 0 44px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.zut-storage .zut-passenger-card__thumb > img,
+.zut-storage .zut-passenger-card__image,
+.zut-storage .zut-storage-item__thumb > img,
+.zut-storage .zut-storage-item__image {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  object-fit: cover;
+  object-position: center center;
+  box-sizing: border-box;
+}
+
+.zut-storage .zut-passenger-card__content,
+.zut-storage .zut-storage-item__content {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.zut-storage .zut-passenger-card__name,
+.zut-storage .zut-passenger-card__meta,
+.zut-storage .zut-storage-item__name,
+.zut-storage .zut-storage-item__meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .zut-storage__controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .zut-storage__capacity-field {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .zut-storage__items-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .zut-storage__items-body {
+    min-height: 360px;
+  }
+}

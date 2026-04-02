@@ -1,0 +1,102 @@
+<div class="zut-storage {{cssClass}}" data-storage-root="true">
+  <section class="zut-sheet__section zut-storage__controls-panel">
+    <div class="zut-storage__controls-row">
+      <div class="zut-field zut-storage__capacity-field">
+        <label class="zut-field__label" for="{{rootId}}-storage-capacity">
+          {{localize "ZUT.Storage.Fields.Capacity"}}
+        </label>
+        <input
+          id="{{rootId}}-storage-capacity"
+          class="zut-field__input"
+          type="text"
+          value="{{storage.capacity}}"
+          data-storage-capacity-input="true"
+          {{#unless storage.canEdit}}disabled{{/unless}}
+        >
+      </div>
+    </div>
+
+    {{#if storage.isLocked}}
+      <p class="zut-storage__locked-hint zut-muted">
+        {{localize "ZUT.Storage.Hints.Locked"}}
+      </p>
+    {{/if}}
+  </section>
+
+  <section class="zut-sheet__section zut-storage__items-panel">
+    <div class="zut-storage__items-header">
+      <div
+        class="zut-field__label zut-field__label--section"
+        role="heading"
+        aria-level="2"
+      >
+        {{storage.sectionLabel}}
+      </div>
+
+      <div class="zut-storage__items-count">
+        <span class="zut-muted">{{localize "ZUT.Storage.Fields.ItemCount"}}</span>
+        <strong>{{storage.itemsCount}}</strong>
+      </div>
+    </div>
+
+    <div class="zut-storage__items-body zut-vehicle-passengers-drop zut-drop-zone" data-storage-drop-zone="true">
+      {{#if storage.hasItems}}
+        <div class="zut-passenger-list zut-storage__item-list">
+          {{#each items}}
+            <article
+              class="zut-passenger-card zut-storage-item"
+              data-storage-item-drag="true"
+              data-item-id="{{this.id}}"
+              draggable="{{#if this.canModify}}true{{else}}false{{/if}}"
+            >
+              <button
+                class="zut-passenger-card__main zut-storage-item__main"
+                type="button"
+                data-storage-item-open="true"
+                data-item-id="{{this.id}}"
+              >
+                <span class="zut-passenger-card__media zut-storage-item__media">
+                  <span class="zut-passenger-card__thumb zut-storage-item__thumb">
+                    <img
+                      class="zut-passenger-card__image zut-storage-item__image"
+                      src="{{this.img}}"
+                      alt="{{this.name}}"
+                    >
+                  </span>
+                </span>
+
+                <span class="zut-passenger-card__content zut-storage-item__content">
+                  <span class="zut-passenger-card__name zut-storage-item__name">{{this.name}}</span>
+
+                  {{#if this.type}}
+                    <span class="zut-passenger-card__meta zut-storage-item__meta zut-muted">{{this.type}}</span>
+                  {{/if}}
+                </span>
+              </button>
+
+              <div class="zut-passenger-card__actions zut-storage-item__actions">
+                <button
+                  class="zut-inline-icon-button"
+                  type="button"
+                  title="{{localize "ZUT.Storage.Actions.RemoveItem"}}"
+                  aria-label="{{localize "ZUT.Storage.Actions.RemoveItem"}}"
+                  data-storage-item-remove="true"
+                  data-item-id="{{this.id}}"
+                  {{#unless this.canModify}}disabled{{/unless}}
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="zut-empty-state zut-storage__empty-state">
+          <p class="zut-empty-state__text">
+            {{storage.emptyLabel}}
+          </p>
+        </div>
+      {{/if}}
+    </div>
+  </section>
+</div>

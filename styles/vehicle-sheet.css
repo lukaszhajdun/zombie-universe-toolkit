@@ -1,0 +1,332 @@
+.zut-vehicle-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-3);
+  min-width: 0;
+}
+
+.zut-vehicle-shell__top {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(260px, 1fr) minmax(300px, 1.1fr);
+  gap: var(--zut-space-3);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.zut-vehicle-shell__bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--zut-space-3);
+  align-items: start;
+  min-width: 0;
+}
+
+.zut-vehicle-column {
+  display: grid;
+  gap: var(--zut-space-2);
+  min-width: 0;
+}
+
+.zut-vehicle-column--left {
+  grid-template-rows: auto minmax(240px, 1fr) auto;
+}
+
+.zut-vehicle-column--middle {
+  grid-template-rows: auto auto 1fr auto;
+}
+
+.zut-vehicle-column--right {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+}
+
+.zut-vehicle-name-panel,
+.zut-vehicle-portrait-panel,
+.zut-vehicle-details-panel,
+.zut-vehicle-owner-panel,
+.zut-vehicle-state-panel,
+.zut-vehicle-stats-panel,
+.zut-vehicle-trunk-panel,
+.zut-vehicle-driver-panel,
+.zut-vehicle-passengers-panel,
+.zut-vehicle-text-panel {
+  min-width: 0;
+}
+
+.zut-vehicle-name-panel {
+  justify-content: center;
+  padding: var(--zut-space-2) var(--zut-space-3);
+}
+
+.zut-vehicle-name-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--zut-space-2);
+}
+
+.zut-vehicle-portrait-panel {
+  min-height: 0;
+  padding: var(--zut-space-2);
+}
+
+.zut-vehicle-header__portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  overflow: hidden;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+.zut-vehicle-details-panel,
+.zut-vehicle-stats-panel {
+  justify-content: start;
+}
+
+.zut-vehicle-trunk-panel {
+  display: grid;
+  gap: var(--zut-space-2);
+}
+
+.zut-vehicle-trunk-panel__availability {
+  margin: 0;
+}
+
+.zut-vehicle-trunk-panel__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zut-space-2);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.zut-vehicle-trunk-panel__toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.zut-vehicle-trunk-panel__open {
+  width: fit-content;
+  min-width: 120px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.16);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.zut-vehicle-trunk-panel__open:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.zut-vehicle-passengers-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.zut-vehicle-passengers-panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--zut-space-2);
+}
+
+.zut-vehicle-passengers-panel__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--zut-space-2);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.zut-vehicle-owner-drop,
+.zut-vehicle-driver-drop {
+  display: flex;
+  min-height: 74px;
+  min-width: 0;
+}
+
+.zut-vehicle-owner-drop__empty,
+.zut-vehicle-driver-drop__empty {
+  width: 100%;
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+}
+
+.zut-vehicle-passengers-drop {
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  min-height: 320px;
+  max-height: 380px;
+  min-width: 0;
+  overflow: auto;
+}
+
+.zut-vehicle-passengers-drop__empty {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.zut-owner-card,
+.zut-passenger-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--zut-space-2);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  padding: var(--zut-space-2) var(--zut-space-3);
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.zut-owner-card--missing,
+.zut-passenger-card--missing {
+  opacity: 0.85;
+}
+
+.zut-owner-card__main,
+.zut-passenger-card__main {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: var(--zut-space-2);
+  align-items: center;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.zut-owner-card__media,
+.zut-passenger-card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.zut-owner-card__thumb,
+.zut-passenger-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.zut-owner-card__image,
+.zut-passenger-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.zut-owner-card__content,
+.zut-passenger-card__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.zut-owner-card__name,
+.zut-passenger-card__name {
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.zut-owner-card__meta,
+.zut-owner-card__missing,
+.zut-passenger-card__meta,
+.zut-passenger-card__missing {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.zut-owner-card__actions,
+.zut-passenger-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zut-passenger-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-2);
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .zut-vehicle-shell__top {
+    grid-template-columns: minmax(220px, 0.9fr) minmax(240px, 1fr) minmax(260px, 1fr);
+  }
+}
+
+@media (max-width: 980px) {
+  .zut-vehicle-shell__top,
+  .zut-vehicle-shell__bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .zut-vehicle-column--left,
+  .zut-vehicle-column--middle {
+    grid-template-rows: auto;
+  }
+
+  .zut-vehicle-column--left {
+    max-width: 360px;
+  }
+
+  .zut-vehicle-column--right {
+    grid-template-rows: auto auto;
+  }
+
+  .zut-vehicle-passengers-drop {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 640px) {
+  .zut-owner-card,
+  .zut-passenger-card {
+    grid-template-columns: 1fr;
+  }
+
+  .zut-owner-card__actions,
+  .zut-passenger-card__actions {
+    justify-self: end;
+  }
+
+  .zut-vehicle-passengers-panel__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

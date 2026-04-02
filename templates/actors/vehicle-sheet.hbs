@@ -1,0 +1,489 @@
+<form class="zut-sheet zut-vehicle-sheet {{cssClass}}" autocomplete="off">
+  <div class="zut-vehicle-shell">
+    <div class="zut-vehicle-shell__top">
+      <div class="zut-vehicle-column zut-vehicle-column--left">
+        <section class="zut-sheet__section zut-vehicle-name-panel">
+          <div class="zut-field">
+            <div class="zut-vehicle-name-panel__header">
+              <button
+                class="zut-lock-toggle {{#if isLocked}}is-locked{{else}}is-unlocked{{/if}}"
+                type="button"
+                data-lock-toggle="true"
+                title="{{lockToggleTitle}}"
+                aria-label="{{lockToggleLabel}}"
+                {{#unless canToggleLock}}disabled{{/unless}}
+              >
+                <i class="{{lockToggleIcon}}" aria-hidden="true"></i>
+                <span class="zut-visually-hidden">{{lockToggleLabel}}</span>
+              </button>
+
+              <label class="zut-field__label" for="{{rootId}}-name">
+                {{localize "ZUT.Sheets.Common.Fields.Name"}}
+              </label>
+            </div>
+
+            <input
+              id="{{rootId}}-name"
+              class="zut-field__input zut-field__input--title"
+              type="text"
+              name="name"
+              value="{{actor.name}}"
+              placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.Name"}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-portrait-panel">
+          <button
+            class="zut-portrait-button zut-sheet__portrait zut-vehicle-header__portrait {{#if canEdit}}is-editable{{/if}}"
+            type="button"
+            data-edit-image="true"
+            data-edit="img"
+            title="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+            aria-label="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+            {{#unless canEdit}}disabled{{/unless}}
+          >
+            <img
+              class="zut-sheet__portrait-image"
+              src="{{actor.img}}"
+              alt="{{actor.name}}"
+            >
+          </button>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-details-panel">
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-vehicle-type">
+              {{localize "ZUT.Sheets.Vehicle.Fields.VehicleType"}}
+            </label>
+            <input
+              id="{{rootId}}-vehicle-type"
+              class="zut-field__input"
+              type="text"
+              name="system.details.vehicleType"
+              value="{{system.details.vehicleType}}"
+              placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.VehicleType"}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-seats">
+              {{localize "ZUT.Sheets.Vehicle.Fields.Seats"}}
+            </label>
+            <input
+              id="{{rootId}}-seats"
+              class="zut-field__input"
+              type="number"
+              min="0"
+              step="1"
+              name="system.details.seats"
+              value="{{system.details.seats}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+        </section>
+      </div>
+
+      <div class="zut-vehicle-column zut-vehicle-column--middle">
+        <section class="zut-sheet__section zut-vehicle-owner-panel">
+          <div class="zut-field">
+            <div
+              class="zut-field__label zut-field__label--section"
+              role="heading"
+              aria-level="2"
+            >
+              {{localize "ZUT.Sheets.Vehicle.Fields.Owner"}}
+            </div>
+
+            <div
+              class="zut-vehicle-owner-drop zut-drop-zone"
+              data-drop-zone="owner"
+              data-role-transfer-target="true"
+              data-role-transfer-target-role="owner"
+              data-role-transfer-target-type="slot"
+            >
+              {{#if hasOwner}}
+                <article class="zut-owner-card {{#unless ownerData.exists}}zut-owner-card--missing{{/unless}}">
+                  <button
+                    class="zut-owner-card__main"
+                    type="button"
+                    data-owner-open="true"
+                  >
+                    <span class="zut-owner-card__media">
+                      <span class="zut-owner-card__thumb">
+                        <img
+                          class="zut-owner-card__image"
+                          src="{{ownerData.img}}"
+                          alt="{{ownerData.name}}"
+                        >
+                      </span>
+                    </span>
+
+                    <span class="zut-owner-card__content">
+                      <span class="zut-owner-card__name">{{ownerData.name}}</span>
+
+                      {{#if ownerData.typeLabel}}
+                        <span class="zut-owner-card__meta zut-muted">{{ownerData.typeLabel}}</span>
+                      {{/if}}
+
+                      {{#unless ownerData.exists}}
+                        <span class="zut-owner-card__missing zut-muted">
+                          {{localize "ZUT.Vehicle.Owner.MissingActorLabel"}}
+                        </span>
+                      {{/unless}}
+                    </span>
+                  </button>
+
+                  <div class="zut-owner-card__actions">
+                    <button
+                      class="zut-inline-icon-button"
+                      type="button"
+                      title="{{localize "ZUT.Sheets.Vehicle.Actions.ClearOwner"}}"
+                      aria-label="{{localize "ZUT.Sheets.Vehicle.Actions.ClearOwner"}}"
+                      data-owner-clear="true"
+                      {{#unless @root.canEdit}}disabled{{/unless}}
+                    >
+                      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </article>
+              {{else}}
+                <div class="zut-empty-state zut-vehicle-owner-drop__empty">
+                  <p class="zut-empty-state__text">
+                    {{localize "ZUT.Sheets.Vehicle.Empty.Owner"}}
+                  </p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-state-panel">
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-state">
+              {{localize "ZUT.Sheets.Vehicle.Fields.State"}}
+            </label>
+            <input
+              id="{{rootId}}-state"
+              class="zut-field__input"
+              type="text"
+              name="system.details.state"
+              value="{{system.details.state}}"
+              placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.State"}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-stats-panel">
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-durability">
+              {{localize "ZUT.Sheets.Vehicle.Fields.Durability"}}
+            </label>
+            <input
+              id="{{rootId}}-durability"
+              class="zut-field__input"
+              type="number"
+              min="0"
+              step="1"
+              name="system.stats.durability"
+              value="{{system.stats.durability}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-maneuverability">
+              {{localize "ZUT.Sheets.Vehicle.Fields.Maneuverability"}}
+            </label>
+            <input
+              id="{{rootId}}-maneuverability"
+              class="zut-field__input"
+              type="number"
+              min="0"
+              step="1"
+              name="system.stats.maneuverability"
+              value="{{system.stats.maneuverability}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-damage">
+              {{localize "ZUT.Sheets.Vehicle.Fields.Damage"}}
+            </label>
+            <input
+              id="{{rootId}}-damage"
+              class="zut-field__input"
+              type="number"
+              min="0"
+              step="1"
+              name="system.stats.damage"
+              value="{{system.stats.damage}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-armor">
+              {{localize "ZUT.Sheets.Vehicle.Fields.Armor"}}
+            </label>
+            <input
+              id="{{rootId}}-armor"
+              class="zut-field__input"
+              type="number"
+              min="0"
+              step="1"
+              name="system.stats.armor"
+              value="{{system.stats.armor}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-trunk-panel">
+          <div class="zut-field zut-vehicle-trunk-panel__availability">
+            <label class="zut-vehicle-trunk-panel__toggle" for="{{rootId}}-trunk-enabled">
+              <input
+                id="{{rootId}}-trunk-enabled"
+                type="checkbox"
+                name="system.storage.trunk.enabled"
+                {{#if isTrunkEnabled}}checked{{/if}}
+                {{#unless editable}}disabled{{/unless}}
+              >
+              <span>{{localize "ZUT.Sheets.Vehicle.Fields.TrunkAccessible"}}</span>
+            </label>
+          </div>
+
+          <button
+            class="zut-vehicle-trunk-panel__open"
+            type="button"
+            data-open-trunk="true"
+            {{#unless isTrunkEnabled}}disabled{{/unless}}
+          >
+            {{localize "ZUT.Sheets.Vehicle.Actions.OpenTrunk"}}
+          </button>
+        </section>
+      </div>
+
+      <div class="zut-vehicle-column zut-vehicle-column--right">
+        <section class="zut-sheet__section zut-vehicle-driver-panel">
+          <div class="zut-field">
+            <div
+              class="zut-field__label zut-field__label--section"
+              role="heading"
+              aria-level="2"
+            >
+              {{localize "ZUT.Sheets.Vehicle.Fields.Driver"}}
+            </div>
+
+            <div
+              class="zut-vehicle-driver-drop zut-drop-zone"
+              data-drop-zone="driver"
+              data-role-transfer-target="true"
+              data-role-transfer-target-role="driver"
+              data-role-transfer-target-type="slot"
+            >
+              {{#if hasDriver}}
+                <article
+                  class="zut-owner-card {{#unless driverData.exists}}zut-owner-card--missing{{/unless}}"
+                  data-uuid="{{driverData.uuid}}"
+                  data-actor-id="{{driverData.id}}"
+                  data-role-transfer-source="true"
+                  data-role-transfer-source-role="driver"
+                  data-role-transfer-source-type="slot"
+                  draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
+                >
+                  <button
+                    class="zut-owner-card__main"
+                    type="button"
+                    data-driver-open="true"
+                    draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
+                  >
+                    <span class="zut-owner-card__media">
+                      <span class="zut-owner-card__thumb">
+                        <img
+                          class="zut-owner-card__image"
+                          src="{{driverData.img}}"
+                          alt="{{driverData.name}}"
+                        >
+                      </span>
+                    </span>
+
+                    <span class="zut-owner-card__content">
+                      <span class="zut-owner-card__name">{{driverData.name}}</span>
+
+                      {{#if driverData.typeLabel}}
+                        <span class="zut-owner-card__meta zut-muted">{{driverData.typeLabel}}</span>
+                      {{/if}}
+
+                      {{#unless driverData.exists}}
+                        <span class="zut-owner-card__missing zut-muted">
+                          {{localize "ZUT.Vehicle.Driver.MissingActorLabel"}}
+                        </span>
+                      {{/unless}}
+                    </span>
+                  </button>
+
+                  <div class="zut-owner-card__actions">
+                    <button
+                      class="zut-inline-icon-button"
+                      type="button"
+                      title="{{localize "ZUT.Sheets.Vehicle.Actions.ClearDriver"}}"
+                      aria-label="{{localize "ZUT.Sheets.Vehicle.Actions.ClearDriver"}}"
+                      data-driver-clear="true"
+                      {{#unless @root.canEdit}}disabled{{/unless}}
+                    >
+                      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </article>
+              {{else}}
+                <div class="zut-empty-state zut-vehicle-driver-drop__empty">
+                  <p class="zut-empty-state__text">
+                    {{localize "ZUT.Sheets.Vehicle.Empty.Driver"}}
+                  </p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-vehicle-passengers-panel">
+          <div class="zut-vehicle-passengers-panel__header">
+            <div
+              class="zut-field__label zut-field__label--section"
+              role="heading"
+              aria-level="2"
+            >
+              {{localize "ZUT.Sheets.Vehicle.Sections.Passengers"}}
+            </div>
+
+            <div class="zut-vehicle-passengers-panel__count">
+              <span class="zut-muted">{{localize "ZUT.Sheets.Vehicle.Fields.PassengerCount"}}</span>
+              <strong>{{occupancyCount}} / {{passengerCapacity}}</strong>
+            </div>
+          </div>
+
+          <div
+            class="zut-vehicle-passengers-drop zut-drop-zone"
+            data-drop-zone="passengers"
+            data-role-transfer-target="true"
+            data-role-transfer-target-role="passengers"
+            data-role-transfer-target-type="list"
+          >
+            {{#if hasPassengers}}
+              <div class="zut-passenger-list">
+                {{#each passengers}}
+                  <article
+                    class="zut-passenger-card {{#unless this.exists}}zut-passenger-card--missing{{/unless}}"
+                    data-passenger-index="{{this.index}}"
+                    data-uuid="{{this.uuid}}"
+                    data-actor-id="{{this.id}}"
+                    data-role-transfer-source="true"
+                    data-role-transfer-source-role="passengers"
+                    data-role-transfer-source-type="listItem"
+                    data-role-transfer-source-index="{{this.index}}"
+                    data-role-transfer-target="true"
+                    data-role-transfer-target-role="passengers"
+                    data-role-transfer-target-type="listItem"
+                    data-role-transfer-target-index="{{this.index}}"
+                    draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
+                  >
+                    <button
+                      class="zut-passenger-card__main"
+                      type="button"
+                      data-passenger-open="true"
+                      data-passenger-index="{{this.index}}"
+                      draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
+                    >
+                      <span class="zut-passenger-card__media">
+                        <span class="zut-passenger-card__thumb">
+                          <img
+                            class="zut-passenger-card__image"
+                            src="{{this.img}}"
+                            alt="{{this.name}}"
+                          >
+                        </span>
+                      </span>
+
+                      <span class="zut-passenger-card__content">
+                        <span class="zut-passenger-card__name">{{this.name}}</span>
+
+                        {{#if this.typeLabel}}
+                          <span class="zut-passenger-card__meta zut-muted">{{this.typeLabel}}</span>
+                        {{/if}}
+
+                        {{#unless this.exists}}
+                          <span class="zut-passenger-card__missing zut-muted">
+                            {{localize "ZUT.Vehicle.Passengers.MissingActorLabel"}}
+                          </span>
+                        {{/unless}}
+                      </span>
+                    </button>
+
+                    <div class="zut-passenger-card__actions">
+                      <button
+                        class="zut-inline-icon-button"
+                        type="button"
+                        title="{{localize "ZUT.Sheets.Vehicle.Actions.RemovePassenger"}}"
+                        aria-label="{{localize "ZUT.Sheets.Vehicle.Actions.RemovePassenger"}}"
+                        data-passenger-remove="true"
+                        data-passenger-index="{{this.index}}"
+                        {{#unless @root.canEdit}}disabled{{/unless}}
+                      >
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="zut-empty-state zut-vehicle-passengers-drop__empty">
+                <p class="zut-empty-state__text">
+                  {{localize "ZUT.Sheets.Vehicle.Empty.Passengers"}}
+                </p>
+              </div>
+            {{/if}}
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="zut-vehicle-shell__bottom">
+      <section class="zut-sheet__section zut-vehicle-text-panel">
+        <div class="zut-field">
+          <label class="zut-field__label" for="{{rootId}}-description">
+            {{localize "ZUT.Sheets.Vehicle.Sections.Description"}}
+          </label>
+          <textarea
+            id="{{rootId}}-description"
+            class="zut-field__textarea"
+            name="system.summary.description"
+            placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.Description"}}"
+            rows="10"
+            {{#unless editable}}disabled{{/unless}}
+          >{{system.summary.description}}</textarea>
+        </div>
+      </section>
+
+      <section class="zut-sheet__section zut-vehicle-text-panel">
+        <div class="zut-field">
+          <label class="zut-field__label" for="{{rootId}}-issues">
+            {{localize "ZUT.Sheets.Vehicle.Sections.Issues"}}
+          </label>
+          <textarea
+            id="{{rootId}}-issues"
+            class="zut-field__textarea"
+            name="system.summary.issues"
+            placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.Issues"}}"
+            rows="10"
+            {{#unless editable}}disabled{{/unless}}
+          >{{system.summary.issues}}</textarea>
+        </div>
+      </section>
+    </div>
+  </div>
+</form>

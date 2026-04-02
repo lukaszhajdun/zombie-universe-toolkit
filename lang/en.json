@@ -1,0 +1,327 @@
+{
+  "ZUT": {
+    "ModuleTitle": "Zombie Universe Toolkit",
+    "Log": {
+      "Init": "Initializing Zombie Universe Toolkit",
+      "Ready": "Zombie Universe Toolkit is ready"
+    },
+    "Settings": {
+      "Debug": {
+        "Name": "Enable debug logging",
+        "Hint": "Write verbose Zombie Universe Toolkit messages to the browser console."
+      },
+      "DefaultLinkActorData": {
+        "Name": "Default Link Actor Data for new module actors",
+        "Hint": "If enabled, newly created module actors will have Link Actor Data enabled in Prototype Token."
+      },
+      "DefaultLockArtworkRotation": {
+        "Name": "Default Lock Artwork Rotation for new module actors",
+        "Hint": "If enabled, newly created module actors will have Lock Artwork Rotation enabled in Prototype Token."
+      },
+      "ActorTypes": {
+        "Group": {
+          "DefaultLinkActorData": {
+            "Name": "Group Actor: Default Link Actor Data",
+            "Hint": "If enabled, newly created Group actors will have Link Actor Data enabled in Prototype Token."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Group Actor: Default Lock Artwork Rotation",
+            "Hint": "If enabled, newly created Group actors will have Lock Artwork Rotation enabled in Prototype Token."
+          }
+        },
+        "Vehicle": {
+          "DefaultLinkActorData": {
+            "Name": "Vehicle Actor: Default Link Actor Data",
+            "Hint": "If enabled, newly created Vehicle actors will have Link Actor Data enabled in Prototype Token."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Vehicle Actor: Default Lock Artwork Rotation",
+            "Hint": "If enabled, newly created Vehicle actors will have Lock Artwork Rotation enabled in Prototype Token."
+          }
+        },
+        "Faction": {
+          "DefaultLinkActorData": {
+            "Name": "Faction Actor: Default Link Actor Data",
+            "Hint": "If enabled, newly created Faction actors will have Link Actor Data enabled in Prototype Token."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Faction Actor: Default Lock Artwork Rotation",
+            "Hint": "If enabled, newly created Faction actors will have Lock Artwork Rotation enabled in Prototype Token."
+          }
+        }
+      }
+    },
+    "Common": {
+      "Notes": "Notes",
+      "Description": "Description",
+      "Add": "Add",
+      "Remove": "Remove"
+    },
+    "Errors": {
+      "AutoSaveFailed": "Failed to save changes.",
+      "EditLockToggleFailed": "Failed to change the edit lock state."
+    },
+    "Group": {
+      "Members": {
+        "UnknownName": "Unknown Actor",
+        "MissingActorLabel": "Actor not found",
+        "Notifications": {
+          "Added": "Actor added to the group.",
+          "AlreadyAdded": "This actor is already in the group.",
+          "CannotAddSelf": "You cannot add the group actor to itself.",
+          "DropLocked": "Unlock editing before adding members.",
+          "InvalidDrop": "Only actor documents can be dropped here.",
+          "MissingActor": "The linked actor could not be found."
+        }
+      }
+    },
+    "Faction": {
+      "KeyFigures": {
+        "UnknownName": "Unknown actor",
+        "MissingActorLabel": "Missing actor"
+      },
+      "Havens": {
+        "UnknownName": "Unknown actor",
+        "MissingActorLabel": "Missing actor"
+      },
+      "Challenges": {
+        "UnknownName": "Unknown actor",
+        "MissingActorLabel": "Missing actor"
+      },
+      "Notifications": {
+        "Added": "Actor added.",
+        "AlreadyAdded": "This actor is already present in this section.",
+        "CannotAddSelf": "You cannot add this faction actor to itself.",
+        "DropLocked": "Unlock editing to add actors.",
+        "InvalidDrop": "Only actor drops are supported here.",
+        "MissingActor": "Could not find the linked actor."
+      }
+    },
+    "Vehicle": {
+      "Owner": {
+        "UnknownName": "Unknown Actor",
+        "MissingActorLabel": "Actor not found",
+        "Notifications": {
+          "Assigned": "Owner assigned.",
+          "DropLocked": "Unlock editing before assigning an owner.",
+          "InvalidDrop": "Only actor documents can be dropped here.",
+          "InvalidType": "Vehicles cannot be assigned as owners.",
+          "MissingActor": "The linked owner actor could not be found."
+        }
+      },
+      "Passengers": {
+        "UnknownName": "Unknown Actor",
+        "MissingActorLabel": "Actor not found",
+        "Notifications": {
+          "Added": "Passenger added.",
+          "AlreadyAdded": "This actor is already in the vehicle.",
+          "DropLocked": "Unlock editing before adding passengers.",
+          "InvalidDrop": "Only actor documents can be dropped here.",
+          "InvalidType": "Groups, factions, and vehicles cannot be passengers.",
+          "Full": "No more passengers can fit in this vehicle.",
+          "MissingActor": "The linked passenger actor could not be found.",
+          "GroupAdded": "Eligible group members added as passengers.",
+          "GroupNoEligible": "This group has no eligible members to add.",
+          "GroupFull": "This group does not fit in the available seats. No passengers were added.",
+          "AlreadyDriver": "This actor is already the driver."
+        }
+      },
+      "Driver": {
+        "UnknownName": "Unknown Actor",
+        "MissingActorLabel": "Actor not found",
+        "Notifications": {
+          "Assigned": "Driver assigned.",
+          "AlreadyAssigned": "This actor is already the driver.",
+          "AlreadyPassenger": "This actor is already a passenger. Remove them from passengers before assigning a driver.",
+          "Occupied": "This vehicle already has a driver. Clear the current driver first.",
+          "DropLocked": "Unlock editing before assigning a driver.",
+          "InvalidDrop": "Only actor documents can be dropped here.",
+          "InvalidType": "Groups, factions, and vehicles cannot be drivers.",
+          "Full": "There is no free seat available for a driver.",
+          "MissingActor": "The linked driver actor could not be found."
+        }
+      }
+    },
+    "Sheets": {
+      "Common": {
+        "Unnamed": "New Entity",
+        "Fields": {
+          "Name": "Name"
+        },
+        "Actions": {
+          "Save": "Save",
+          "LockEditing": "Lock editing",
+          "UnlockEditing": "Unlock editing",
+          "EditPortrait": "Change portrait"
+        },
+        "Controls": {
+          "PrototypeToken": "Prototype Token",
+          "PortraitArtwork": "View Character Artwork",
+          "TokenArtwork": "View Token Artwork"
+        }
+      },
+      "Group": {
+        "Label": "Group (ZU)",
+        "Sections": {
+          "Members": "Members",
+          "Description": "Description",
+          "Notes": "Notes"
+        },
+        "Fields": {
+          "Faction": "Faction",
+          "Status": "Status",
+          "Location": "Location",
+          "MemberCount": "Members"
+        },
+        "Actions": {
+          "RemoveMember": "Remove member"
+        },
+        "Empty": {
+          "Members": "No members have been added yet. Drag actors here."
+        },
+        "Placeholders": {
+          "Name": "Group name",
+          "Faction": "e.g. Highway Wolves",
+          "Status": "e.g. Travelling",
+          "Location": "e.g. Northern Highway",
+          "Description": "Describe the group...",
+          "Notes": "Add notes for this group..."
+        }
+      },
+      "Vehicle": {
+        "Label": "Vehicle (ZU)",
+        "Sections": {
+          "Passengers": "Passengers",
+          "Description": "Description",
+          "Issues": "Issues"
+        },
+        "Fields": {
+          "Owner": "Owner",
+          "VehicleType": "Vehicle Type",
+          "Seats": "Seats",
+          "TrunkAccessible": "Trunk accessible",
+          "State": "State",
+          "Durability": "Durability",
+          "Maneuverability": "Maneuverability",
+          "Damage": "Damage",
+          "Armor": "Armor",
+          "PassengerCount": "Occupancy",
+          "Driver": "Driver"
+        },
+        "Actions": {
+          "ClearOwner": "Clear owner",
+          "RemovePassenger": "Remove passenger",
+          "ClearDriver": "Clear driver",
+          "OpenTrunk": "Open trunk"
+        },
+        "Empty": {
+          "Owner": "No owner assigned yet. Drag an actor here.",
+          "Passengers": "No passengers assigned yet. Drag actors here.",
+          "Driver": "No driver assigned yet. Drag an actor here."
+        },
+        "Placeholders": {
+          "Name": "Vehicle name",
+          "VehicleType": "e.g. Truck",
+          "State": "e.g. Operational",
+          "Description": "Describe the vehicle...",
+          "Issues": "List faults, damage, and maintenance notes..."
+        }
+      },
+      "Faction": {
+        "Label": "Faction (ZU)",
+        "Sections": {
+          "KeyFigures": "Key Figures",
+          "Havens": "Havens",
+          "Challenges": "Challenges",
+          "Description": "Description",
+          "Notes": "Notes"
+        },
+        "Fields": {
+          "Size": "Size",
+          "Type": "Type",
+          "Leadership": "Leadership",
+          "Doctrine": "Doctrine"
+        },
+        "Actions": {
+          "RemoveKeyFigure": "Remove key figure",
+          "RemoveHaven": "Remove haven",
+          "RemoveChallenge": "Remove challenge"
+        },
+        "Empty": {
+          "KeyFigures": "No key figures yet. Drag actors here.",
+          "Havens": "No havens yet. Drag actors here.",
+          "Challenges": "No challenges yet. Drag actors here."
+        },
+        "Placeholders": {
+          "Name": "Faction name",
+          "Size": "e.g. Regional",
+          "Type": "e.g. Military order",
+          "Leadership": "e.g. Council of Three",
+          "Doctrine": "e.g. Expansion through trade",
+          "Description": "Describe this faction...",
+          "Notes": "Add strategic notes and hooks..."
+        }
+      }
+    },
+    "Storage": {
+      "Window": {
+        "Title": "{storage} — {actor}",
+        "TitleFallback": "Storage"
+      },
+      "Sections": {
+        "Items": "Items"
+      },
+      "Fields": {
+        "Storage": "Storage",
+        "HostActor": "Host Actor",
+        "Capacity": "Capacity",
+        "ItemCount": "Items"
+      },
+      "Slots": {
+        "Trunk": {
+          "Label": "Trunk Storage",
+          "SectionLabel": "Trunk"
+        },
+        "Unknown": "Storage"
+      },
+      "Actions": {
+        "RemoveItem": "Remove item"
+      },
+      "Empty": {
+        "Items": "No items have been stored yet. Drag items here.",
+        "Capacity": "—"
+      },
+      "Hints": {
+        "Locked": "This host is locked. You can browse the storage, but item changes are disabled."
+      },
+      "Items": {
+        "Unnamed": "Unnamed Item"
+      },
+      "Notifications": {
+        "InvalidDrop": "Only item drops are supported here.",
+        "StorageLocked": "Unlock editing on the host actor to modify this storage.",
+        "StorageDisabled": "This storage is currently disabled.",
+        "ItemCopiedToStorage": "Item copied to storage.",
+        "ItemMovedToStorage": "Item moved to storage.",
+        "ItemAlreadyInStorage": "This item is already stored here.",
+        "ItemRemoved": "Item removed from storage.",
+        "MissingItem": "The linked item could not be found.",
+        "ItemMovedToActor": "Item moved out of storage.",
+        "MoveToActorFailed": "The item could not be moved to that actor.",
+        "TargetActorNotOwned": "You do not have permission to add items to that actor."
+      }
+    }
+  },
+  "TYPES": {
+    "Actor": {
+      "group": "Group",
+      "vehicle": "Vehicle",
+      "faction": "Faction",
+      "zombie-universe-toolkit": {
+        "group": "Group (ZU)",
+        "vehicle": "Vehicle (ZU)",
+        "faction": "Faction (ZU)"
+      }
+    }
+  }
+}

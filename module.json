@@ -1,0 +1,44 @@
+{
+  "id": "zombie-universe-toolkit",
+  "title": "Zombie Universe Toolkit",
+  "description": "System-agnostic world entity actors for Foundry VTT: groups, vehicles, factions, and future worldbuilding tools.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "Lukasz Hajdun"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/base.css",
+    "styles/faction-sheet.css",
+    "styles/group-sheet.css",
+    "styles/vehicle-sheet.css",
+    "styles/storage-window.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "pl",
+      "name": "Polski",
+      "path": "lang/pl.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "group": {},
+      "vehicle": {},
+      "faction": {}
+    }
+  }
+}

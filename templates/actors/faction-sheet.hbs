@@ -1,0 +1,301 @@
+<form class="zut-sheet zut-faction-sheet {{cssClass}}" autocomplete="off">
+  <div class="zut-faction-shell">
+    <div class="zut-faction-shell__grid">
+      <div class="zut-faction-shell__left">
+        <section class="zut-sheet__section zut-faction-name-panel">
+          <div class="zut-field">
+            <div class="zut-faction-name-panel__header">
+              <button
+                class="zut-lock-toggle {{#if isLocked}}is-locked{{else}}is-unlocked{{/if}}"
+                type="button"
+                data-lock-toggle="true"
+                title="{{lockToggleTitle}}"
+                aria-label="{{lockToggleLabel}}"
+                {{#unless canToggleLock}}disabled{{/unless}}
+              >
+                <i class="{{lockToggleIcon}}" aria-hidden="true"></i>
+                <span class="zut-visually-hidden">{{lockToggleLabel}}</span>
+              </button>
+
+              <label class="zut-field__label" for="{{rootId}}-name">
+                {{localize "ZUT.Sheets.Common.Fields.Name"}}
+              </label>
+            </div>
+
+            <input
+              id="{{rootId}}-name"
+              class="zut-field__input zut-field__input--title"
+              type="text"
+              name="name"
+              value="{{actor.name}}"
+              placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Name"}}"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-faction-identity-panel">
+          <div class="zut-faction-identity-grid">
+            <div class="zut-faction-identity-grid__portrait-slot">
+              <button
+                class="zut-portrait-button zut-sheet__portrait zut-faction-header__portrait {{#if canEdit}}is-editable{{/if}}"
+                type="button"
+                data-edit-image="true"
+                data-edit="img"
+                title="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+                aria-label="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+                {{#unless canEdit}}disabled{{/unless}}
+              >
+                <img
+                  class="zut-sheet__portrait-image"
+                  src="{{actor.img}}"
+                  alt="{{actor.name}}"
+                >
+              </button>
+            </div>
+
+            <div class="zut-field">
+              <label class="zut-field__label" for="{{rootId}}-size">
+                {{localize "ZUT.Sheets.Faction.Fields.Size"}}
+              </label>
+              <input
+                id="{{rootId}}-size"
+                class="zut-field__input"
+                type="text"
+                name="system.identity.size"
+                value="{{system.identity.size}}"
+                placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Size"}}"
+                {{#unless editable}}disabled{{/unless}}
+              >
+            </div>
+
+            <div class="zut-field">
+              <label class="zut-field__label" for="{{rootId}}-type">
+                {{localize "ZUT.Sheets.Faction.Fields.Type"}}
+              </label>
+              <input
+                id="{{rootId}}-type"
+                class="zut-field__input"
+                type="text"
+                name="system.identity.type"
+                value="{{system.identity.type}}"
+                placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Type"}}"
+                {{#unless editable}}disabled{{/unless}}
+              >
+            </div>
+
+            <div class="zut-field">
+              <label class="zut-field__label" for="{{rootId}}-leadership">
+                {{localize "ZUT.Sheets.Faction.Fields.Leadership"}}
+              </label>
+              <input
+                id="{{rootId}}-leadership"
+                class="zut-field__input"
+                type="text"
+                name="system.identity.leadership"
+                value="{{system.identity.leadership}}"
+                placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Leadership"}}"
+                {{#unless editable}}disabled{{/unless}}
+              >
+            </div>
+
+            <div class="zut-field">
+              <label class="zut-field__label" for="{{rootId}}-doctrine">
+                {{localize "ZUT.Sheets.Faction.Fields.Doctrine"}}
+              </label>
+              <input
+                id="{{rootId}}-doctrine"
+                class="zut-field__input"
+                type="text"
+                name="system.identity.doctrine"
+                value="{{system.identity.doctrine}}"
+                placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Doctrine"}}"
+                {{#unless editable}}disabled{{/unless}}
+              >
+            </div>
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-faction-text-panel">
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-description">
+              {{localize "ZUT.Sheets.Faction.Sections.Description"}}
+            </label>
+            <textarea
+              id="{{rootId}}-description"
+              class="zut-field__textarea"
+              name="system.summary.description"
+              placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Description"}}"
+              rows="8"
+              {{#unless editable}}disabled{{/unless}}
+            >{{system.summary.description}}</textarea>
+          </div>
+
+          <div class="zut-field">
+            <label class="zut-field__label" for="{{rootId}}-notes">
+              {{localize "ZUT.Sheets.Faction.Sections.Notes"}}
+            </label>
+            <textarea
+              id="{{rootId}}-notes"
+              class="zut-field__textarea"
+              name="system.summary.notes"
+              placeholder="{{localize "ZUT.Sheets.Faction.Placeholders.Notes"}}"
+              rows="8"
+              {{#unless editable}}disabled{{/unless}}
+            >{{system.summary.notes}}</textarea>
+          </div>
+        </section>
+      </div>
+
+      <div class="zut-faction-shell__right">
+        <section class="zut-sheet__section zut-faction-list-panel">
+          <div class="zut-field zut-field--panel">
+            <div class="zut-field__label zut-field__label--section" role="heading" aria-level="2">
+              {{localize "ZUT.Sheets.Faction.Sections.KeyFigures"}} ({{keyFiguresCount}})
+            </div>
+
+            <div class="zut-faction-list-panel__body zut-drop-zone" data-drop-zone="keyFigures">
+              {{#if hasKeyFigures}}
+                <div class="zut-member-list">
+                  {{#each keyFigures as |entry|}}
+                    <article class="zut-member-card {{#unless entry.exists}}zut-member-card--missing{{/unless}}">
+                      <button class="zut-member-card__main" type="button" data-key-figure-open="true" data-key-figure-index="{{entry.index}}">
+                        <span class="zut-member-card__media">
+                          <span class="zut-member-card__thumb">
+                            <img class="zut-member-card__image" src="{{entry.img}}" alt="{{entry.name}}">
+                          </span>
+                        </span>
+
+                        <span class="zut-member-card__content">
+                          <span class="zut-member-card__name">{{entry.name}}</span>
+                          {{#if entry.role}}
+                            <span class="zut-member-card__meta zut-muted">{{entry.role}}</span>
+                          {{/if}}
+                          {{#unless entry.exists}}
+                            <span class="zut-member-card__missing zut-muted">{{localize "ZUT.Faction.KeyFigures.MissingActorLabel"}}</span>
+                          {{/unless}}
+                        </span>
+                      </button>
+
+                      <button
+                        class="zut-inline-icon-button zut-member-card__remove"
+                        type="button"
+                        title="{{localize "ZUT.Sheets.Faction.Actions.RemoveKeyFigure"}}"
+                        aria-label="{{localize "ZUT.Sheets.Faction.Actions.RemoveKeyFigure"}}"
+                        data-key-figure-remove="true"
+                        data-key-figure-index="{{entry.index}}"
+                        {{#unless @root.canEdit}}disabled{{/unless}}
+                      >
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                      </button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{else}}
+                <div class="zut-empty-state">
+                  <p class="zut-empty-state__text">{{localize "ZUT.Sheets.Faction.Empty.KeyFigures"}}</p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-faction-list-panel">
+          <div class="zut-field zut-field--panel">
+            <div class="zut-field__label zut-field__label--section" role="heading" aria-level="2">
+              {{localize "ZUT.Sheets.Faction.Sections.Havens"}} ({{havensCount}})
+            </div>
+
+            <div class="zut-faction-list-panel__body zut-drop-zone" data-drop-zone="havens">
+              {{#if hasHavens}}
+                <div class="zut-member-list">
+                  {{#each havens as |entry|}}
+                    <article class="zut-member-card {{#unless entry.exists}}zut-member-card--missing{{/unless}}">
+                      <button class="zut-member-card__main" type="button" data-haven-open="true" data-haven-index="{{entry.index}}">
+                        <span class="zut-member-card__media">
+                          <span class="zut-member-card__thumb">
+                            <img class="zut-member-card__image" src="{{entry.img}}" alt="{{entry.name}}">
+                          </span>
+                        </span>
+                        <span class="zut-member-card__content">
+                          <span class="zut-member-card__name">{{entry.name}}</span>
+                          {{#unless entry.exists}}
+                            <span class="zut-member-card__missing zut-muted">{{localize "ZUT.Faction.Havens.MissingActorLabel"}}</span>
+                          {{/unless}}
+                        </span>
+                      </button>
+
+                      <button
+                        class="zut-inline-icon-button zut-member-card__remove"
+                        type="button"
+                        title="{{localize "ZUT.Sheets.Faction.Actions.RemoveHaven"}}"
+                        aria-label="{{localize "ZUT.Sheets.Faction.Actions.RemoveHaven"}}"
+                        data-haven-remove="true"
+                        data-haven-index="{{entry.index}}"
+                        {{#unless @root.canEdit}}disabled{{/unless}}
+                      >
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                      </button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{else}}
+                <div class="zut-empty-state">
+                  <p class="zut-empty-state__text">{{localize "ZUT.Sheets.Faction.Empty.Havens"}}</p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+
+        <section class="zut-sheet__section zut-faction-list-panel">
+          <div class="zut-field zut-field--panel">
+            <div class="zut-field__label zut-field__label--section" role="heading" aria-level="2">
+              {{localize "ZUT.Sheets.Faction.Sections.Challenges"}} ({{challengesCount}})
+            </div>
+
+            <div class="zut-faction-list-panel__body zut-drop-zone" data-drop-zone="challenges">
+              {{#if hasChallenges}}
+                <div class="zut-member-list">
+                  {{#each challenges as |entry|}}
+                    <article class="zut-member-card {{#unless entry.exists}}zut-member-card--missing{{/unless}}">
+                      <button class="zut-member-card__main" type="button" data-challenge-open="true" data-challenge-index="{{entry.index}}">
+                        <span class="zut-member-card__media">
+                          <span class="zut-member-card__thumb">
+                            <img class="zut-member-card__image" src="{{entry.img}}" alt="{{entry.name}}">
+                          </span>
+                        </span>
+                        <span class="zut-member-card__content">
+                          <span class="zut-member-card__name">{{entry.name}}</span>
+                          {{#unless entry.exists}}
+                            <span class="zut-member-card__missing zut-muted">{{localize "ZUT.Faction.Challenges.MissingActorLabel"}}</span>
+                          {{/unless}}
+                        </span>
+                      </button>
+
+                      <button
+                        class="zut-inline-icon-button zut-member-card__remove"
+                        type="button"
+                        title="{{localize "ZUT.Sheets.Faction.Actions.RemoveChallenge"}}"
+                        aria-label="{{localize "ZUT.Sheets.Faction.Actions.RemoveChallenge"}}"
+                        data-challenge-remove="true"
+                        data-challenge-index="{{entry.index}}"
+                        {{#unless @root.canEdit}}disabled{{/unless}}
+                      >
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                      </button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{else}}
+                <div class="zut-empty-state">
+                  <p class="zut-empty-state__text">{{localize "ZUT.Sheets.Faction.Empty.Challenges"}}</p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</form>
