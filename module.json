@@ -1,7 +1,7 @@
 {
   "id": "zombie-universe-toolkit",
   "title": "Zombie Universe Toolkit",
-  "description": "World entity actors for Foundry VTT: groups, vehicles, factions, and future worldbuilding tools. Includes optional integration with The Walking Dead Universe RPG.",
+  "description": "<p>World entity actors for Foundry VTT: groups, vehicles, factions, and future worldbuilding tools. Includes optional integration with The Walking Dead Universe RPG.</p>",
   "version": "0.2.0",
   "url": "https://github.com/lukaszhajdun/zombie-universe-toolkit",
   "manifest": "https://raw.githubusercontent.com/lukaszhajdun/zombie-universe-toolkit/main/module.json",
@@ -12,29 +12,64 @@
   },
   "authors": [
     {
-      "name": "Lukasz Hajdun"
+      "name": "Lukasz Hajdun",
+      "flags": {}
     }
   ],
   "esmodules": [
     "scripts/main.js"
   ],
   "styles": [
-    "styles/base.css",
-    "styles/faction-sheet.css",
-    "styles/group-sheet.css",
-    "styles/vehicle-sheet.css",
-    "styles/storage-window.css"
+    {
+      "src": "styles/base.css"
+    },
+    {
+      "src": "styles/faction-sheet.css"
+    },
+    {
+      "src": "styles/group-sheet.css"
+    },
+    {
+      "src": "styles/vehicle-sheet.css"
+    },
+    {
+      "src": "styles/storage-window.css"
+    }
   ],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "lang/en.json",
+      "flags": {}
     },
     {
       "lang": "pl",
       "name": "Polski",
-      "path": "lang/pl.json"
+      "path": "lang/pl.json",
+      "flags": {}
+    }
+  ],
+  "packs": [
+    {
+      "name": "macros",
+      "label": "macros",
+      "path": "packs/macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Zombie Universe Toolkit",
+      "color": "#1e72cc",
+      "sorting": "m",
+      "packs": [
+        "macros"
+      ]
     }
   ],
   "documentTypes": {
@@ -43,5 +78,6 @@
       "vehicle": {},
       "faction": {}
     }
-  }
+  },
+  "flags": {}
 }
