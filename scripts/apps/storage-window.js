@@ -320,16 +320,11 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     const dragData = getStorageDragDataFromEvent(event);
-    if (!dragData) {
-      ui.notifications?.warn(game.i18n.localize("ZUT.Storage.Notifications.InvalidDrop"));
-      return;
-    }
-
     if (isStorageTransferDragData(dragData)) {
       return;
     }
 
-    const item = await resolveDroppedItemDocument(dragData);
+    const item = await resolveDroppedItemDocument(dragData, event);
     if (!item) {
       ui.notifications?.warn(game.i18n.localize("ZUT.Storage.Notifications.InvalidDrop"));
       return;

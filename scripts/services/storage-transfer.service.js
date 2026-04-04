@@ -57,10 +57,41 @@ export function isStorageTransferDragData(dragData) {
   return Boolean(dragData?.[STORAGE_TRANSFER_DATA_KEY]);
 }
 
-export async function resolveDroppedItemDocument(dragData) {
-  if (!dragData || typeof dragData !== "object") return null;
-  if (isStorageTransferDragData(dragData)) return null;
-  return resolveItemFromDragData(dragData);
+function resolveLegacyDraggedItemDocument() {
+  const legacyDraggedItem = game?.data?.item;
+  if (!isItemDocument(legacyDraggedItem)) return null;
+  return isActorDocument(legacyDraggedItem.parent) ? legacyDraggedItem : null;
+}
+
+export async function resolveDroppedItemDocument(dragData, event = null) {
+  let canUseLegacyFallback = !dragData;
+
+  if (dragData && typeof dragData === "object") {
+    if (isStorageTransferDragData(dragData)) return null;
+
+    // If explicit drag payload exists, trust it. Non-item payloads must be
+    // rejected, and malformed item payloads should not fall back to globals.
+    if (dragData.type && dragData.type !== "Item") return null;
+
+    const resolvedItem = await resolveItemFromDragData(dragData);
+    if (resolvedItem) return resolvedItem;
+
+    // Some actor sheets provide an object payload without item typing.
+    // Allow legacy fallback only for that missing-type case.
+    canUseLegacyFallback = !dragData.type;
+  }
+
+  // TWDU actor sheets still track dragged owned items via `game.data.item`.
+  // Only use that legacy path when the browser provides no payload at all.
+  if (
+    typeof DragEvent === "function"
+    && event instanceof DragEvent
+    && canUseLegacyFallback
+  ) {
+    return resolveLegacyDraggedItemDocument();
+  }
+
+  return null;
 }
 
 export function createStorageTransferDragData(item, slotId) {
