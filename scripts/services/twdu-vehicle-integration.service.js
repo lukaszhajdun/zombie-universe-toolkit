@@ -5,11 +5,15 @@ import {
 } from "../core/constants.js";
 import { logger } from "../core/logger.js";
 import { resolveActorReference } from "./actor-ref.service.js";
-import { getVehicleDriverReference } from "./vehicle-actor.service.js";
+import {
+  clearVehicleDriver,
+  getVehicleDriverReference
+} from "./vehicle-actor.service.js";
 
 const SNAPSHOT_FLAG_KEY = "twduVehicleItemSnapshot";
 const DRIVER_CLONE_FLAG_KEY = "twduVehicleClone";
 const SOURCE_ITEM_FLAG_KEY = "twduVehicleSourceItem";
+const SUPPRESS_ITEM_HOOKS_OPTION = `${MODULE_ID}SuppressTwduVehicleItemHooks`;
 
 function isActorDocument(actor) {
   return actor?.documentName === "Actor";
@@ -72,6 +76,20 @@ function getDriverCloneMetadata(item) {
 
 function getSourceItemMetadata(item) {
   return item?.getFlag(MODULE_ID, SOURCE_ITEM_FLAG_KEY) ?? null;
+}
+
+function getLinkedVehicleMetadata(item) {
+  return getDriverCloneMetadata(item) ?? getSourceItemMetadata(item) ?? null;
+}
+
+function getEmbeddedItemParentActor(item) {
+  return item?.parent?.documentName === "Actor" ? item.parent : null;
+}
+
+function buildSuppressedItemHookOptions() {
+  return {
+    [SUPPRESS_ITEM_HOOKS_OPTION]: true
+  };
 }
 
 function buildSynchronizedVehicleSystemData(vehicleActor, sourceItemSystemData) {
@@ -153,7 +171,7 @@ async function removeVehicleSourceItems(vehicleActor) {
 
   if (!sourceItemIds.length) return 0;
 
-  await vehicleActor.deleteEmbeddedDocuments("Item", sourceItemIds);
+  await vehicleActor.deleteEmbeddedDocuments("Item", sourceItemIds, buildSuppressedItemHookOptions());
   return sourceItemIds.length;
 }
 
@@ -178,12 +196,13 @@ async function upsertVehicleSourceItem(vehicleActor, snapshot) {
       _id: primarySourceItem.id,
       ...sourceItemData
     }
-  ]);
+  ], buildSuppressedItemHookOptions());
 
   if (duplicateSourceItems.length) {
     await vehicleActor.deleteEmbeddedDocuments(
       "Item",
-      duplicateSourceItems.map(item => item.id).filter(Boolean)
+      duplicateSourceItems.map(item => item.id).filter(Boolean),
+      buildSuppressedItemHookOptions()
     );
   }
 
@@ -203,7 +222,7 @@ async function removeDriverCloneItemsForVehicle(actor, vehicleActorUuid) {
 
   if (!cloneItemIds.length) return 0;
 
-  await actor.deleteEmbeddedDocuments("Item", cloneItemIds);
+  await actor.deleteEmbeddedDocuments("Item", cloneItemIds, buildSuppressedItemHookOptions());
   return cloneItemIds.length;
 }
 
@@ -229,12 +248,13 @@ async function upsertDriverVehicleClone(driverActor, vehicleActor, sourceItem) {
       _id: primaryClone.id,
       ...cloneItemData
     }
-  ]);
+  ], buildSuppressedItemHookOptions());
 
   if (duplicateClones.length) {
     await driverActor.deleteEmbeddedDocuments(
       "Item",
-      duplicateClones.map(item => item.id).filter(Boolean)
+      duplicateClones.map(item => item.id).filter(Boolean),
+      buildSuppressedItemHookOptions()
     );
   }
 
@@ -256,8 +276,105 @@ export function isTwduVehicleItem(item) {
   return item?.documentName === "Item" && item.type === "vehicle";
 }
 
+export function shouldIgnoreTwduVehicleItemHooks(options) {
+  return Boolean(options?.[SUPPRESS_ITEM_HOOKS_OPTION]);
+}
+
 export function getTwduVehicleItemSnapshot(actor) {
   return getVehicleSnapshot(actor);
+}
+
+export async function syncModuleVehicleFromTwduLinkedItem(item) {
+  if (!isTwduSystemActive()) {
+    return { status: "inactiveSystem" };
+  }
+
+  if (!isTwduVehicleItem(item)) {
+    return { status: "invalidItem" };
+  }
+
+  const metadata = getLinkedVehicleMetadata(item);
+  if (!metadata?.vehicleActorUuid) {
+    return { status: "unlinkedItem" };
+  }
+
+  const vehicleActor = await fromUuid(metadata.vehicleActorUuid);
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return { status: "missingVehicleActor" };
+  }
+
+  const parentActor = getEmbeddedItemParentActor(item);
+  const driverCloneMetadata = getDriverCloneMetadata(item);
+
+  if (driverCloneMetadata && parentActor) {
+    const currentDriverReference = getVehicleDriverReference(vehicleActor);
+    const currentDriverUuid = currentDriverReference?.uuid ?? "";
+
+    if (!currentDriverUuid || currentDriverUuid !== parentActor.uuid) {
+      return { status: "staleClone" };
+    }
+  }
+
+  const updateData = buildVehicleStatsUpdateFromTwduItem(item);
+
+  if (typeof item?.name === "string") {
+    updateData.name = item.name;
+  }
+
+  if (typeof item?.img === "string" && item.img.length) {
+    updateData.img = item.img;
+  }
+
+  if (!Object.keys(updateData).length) {
+    return { status: "noRelevantFields", vehicleActor };
+  }
+
+  await vehicleActor.update(updateData);
+
+  return {
+    status: "updatedVehicleActor",
+    vehicleActor,
+    appliedUpdateData: updateData
+  };
+}
+
+export async function clearVehicleDriverForDeletedTwduClone(item) {
+  if (!isTwduSystemActive()) {
+    return { status: "inactiveSystem" };
+  }
+
+  const metadata = getDriverCloneMetadata(item);
+  if (!metadata?.vehicleActorUuid) {
+    return { status: "notDriverClone" };
+  }
+
+  const driverActor = getEmbeddedItemParentActor(item);
+  if (!isActorDocument(driverActor)) {
+    return { status: "missingDriverActor" };
+  }
+
+  const vehicleActor = await fromUuid(metadata.vehicleActorUuid);
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return { status: "missingVehicleActor" };
+  }
+
+  const currentDriverReference = getVehicleDriverReference(vehicleActor);
+  const currentDriverUuid = currentDriverReference?.uuid ?? "";
+
+  if (!currentDriverUuid || currentDriverUuid !== driverActor.uuid) {
+    return {
+      status: "driverAlreadyDifferent",
+      vehicleActor
+    };
+  }
+
+  await clearVehicleDriver(vehicleActor);
+
+  return {
+    status: "clearedVehicleDriver",
+    vehicleActor,
+    driverActor
+  };
 }
 
 export async function importTwduVehicleItemToModuleVehicle(vehicleActor, item) {

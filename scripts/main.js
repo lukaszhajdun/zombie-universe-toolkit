@@ -18,7 +18,10 @@ import {
   moveStorageItemFromDragData
 } from "./services/storage-transfer.service.js";
 import {
+  clearVehicleDriverForDeletedTwduClone,
   isTwduSystemActive,
+  shouldIgnoreTwduVehicleItemHooks,
+  syncModuleVehicleFromTwduLinkedItem,
   syncTwduDriverVehicleClone
 } from "./services/twdu-vehicle-integration.service.js";
 import * as settingsApi from "./settings/access.js";
@@ -207,6 +210,48 @@ Hooks.on("updateActor", (actor, changedData) => {
 
   void syncTwduDriverVehicleClone(actor).catch(error => {
     logger.error("Failed to sync TWDU driver vehicle clone after actor update.", error);
+  });
+});
+
+Hooks.on("updateItem", (item, changedData, options) => {
+  if (!isTwduSystemActive()) return;
+  if (shouldIgnoreTwduVehicleItemHooks(options)) return;
+
+  const relevantVehicleFieldChanged = changedDataHasPath(changedData, "system")
+    || changedDataHasPath(changedData, "name")
+    || changedDataHasPath(changedData, "img")
+    || changedDataHasPath(changedData, "system.hull")
+    || changedDataHasPath(changedData, "system.maneuverability")
+    || changedDataHasPath(changedData, "system.manueverability")
+    || changedDataHasPath(changedData, "system.damage")
+    || changedDataHasPath(changedData, "system.armor")
+    || changedDataHasPath(changedData, "system.issue");
+
+  if (!relevantVehicleFieldChanged) return;
+
+  logger.debug("TWDU linked vehicle item reverse sync trigger detected on updateItem.", {
+    itemUuid: item.uuid,
+    itemName: item.name,
+    parentActorUuid: item.parent?.uuid ?? ""
+  });
+
+  void syncModuleVehicleFromTwduLinkedItem(item).catch(error => {
+    logger.error("Failed to sync module vehicle actor from linked TWDU vehicle item update.", error);
+  });
+});
+
+Hooks.on("deleteItem", (item, options) => {
+  if (!isTwduSystemActive()) return;
+  if (shouldIgnoreTwduVehicleItemHooks(options)) return;
+
+  logger.debug("TWDU linked driver clone deletion detected on deleteItem.", {
+    itemUuid: item.uuid,
+    itemName: item.name,
+    parentActorUuid: item.parent?.uuid ?? ""
+  });
+
+  void clearVehicleDriverForDeletedTwduClone(item).catch(error => {
+    logger.error("Failed to clear module vehicle driver after linked TWDU clone deletion.", error);
   });
 });
 
