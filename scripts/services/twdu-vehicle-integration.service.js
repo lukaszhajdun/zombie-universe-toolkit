@@ -14,6 +14,7 @@ const SNAPSHOT_FLAG_KEY = "twduVehicleItemSnapshot";
 const DRIVER_CLONE_FLAG_KEY = "twduVehicleClone";
 const SOURCE_ITEM_FLAG_KEY = "twduVehicleSourceItem";
 const SUPPRESS_ITEM_HOOKS_OPTION = `${MODULE_ID}SuppressTwduVehicleItemHooks`;
+const SUPPRESSED_LINKED_ITEM_KEYS = new Set();
 
 function isActorDocument(actor) {
   return actor?.documentName === "Actor";
@@ -90,6 +91,43 @@ function buildSuppressedItemHookOptions() {
   return {
     [SUPPRESS_ITEM_HOOKS_OPTION]: true
   };
+}
+
+function getLinkedItemSuppressionKeys(itemLike) {
+  if (!itemLike) return [];
+
+  if (typeof itemLike === "string" && itemLike.length) {
+    return [`id:${itemLike}`];
+  }
+
+  const keys = [];
+
+  if (typeof itemLike.id === "string" && itemLike.id.length) {
+    keys.push(`id:${itemLike.id}`);
+  }
+
+  if (typeof itemLike.uuid === "string" && itemLike.uuid.length) {
+    keys.push(`uuid:${itemLike.uuid}`);
+  }
+
+  return keys;
+}
+
+async function withSuppressedLinkedItemHooks(itemsOrIds, operation) {
+  const keys = (itemsOrIds ?? [])
+    .flatMap(getLinkedItemSuppressionKeys);
+
+  for (const key of keys) {
+    SUPPRESSED_LINKED_ITEM_KEYS.add(key);
+  }
+
+  try {
+    return await operation();
+  } finally {
+    for (const key of keys) {
+      SUPPRESSED_LINKED_ITEM_KEYS.delete(key);
+    }
+  }
 }
 
 function buildSynchronizedVehicleSystemData(vehicleActor, sourceItemSystemData) {
@@ -192,7 +230,11 @@ async function removeVehicleSourceItems(vehicleActor) {
 
   if (!sourceItemIds.length) return 0;
 
-  await vehicleActor.deleteEmbeddedDocuments("Item", sourceItemIds, buildSuppressedItemHookOptions());
+  await withSuppressedLinkedItemHooks(sourceItemIds, () => vehicleActor.deleteEmbeddedDocuments(
+    "Item",
+    sourceItemIds,
+    buildSuppressedItemHookOptions()
+  ));
   return sourceItemIds.length;
 }
 
@@ -212,19 +254,21 @@ async function upsertVehicleSourceItem(vehicleActor, snapshot) {
 
   const [primarySourceItem, ...duplicateSourceItems] = sourceItems;
 
-  await vehicleActor.updateEmbeddedDocuments("Item", [
+  await withSuppressedLinkedItemHooks([primarySourceItem], () => vehicleActor.updateEmbeddedDocuments("Item", [
     {
       _id: primarySourceItem.id,
       ...sourceItemData
     }
-  ], buildSuppressedItemHookOptions());
+  ], buildSuppressedItemHookOptions()));
 
   if (duplicateSourceItems.length) {
-    await vehicleActor.deleteEmbeddedDocuments(
+    const duplicateIds = duplicateSourceItems.map(item => item.id).filter(Boolean);
+
+    await withSuppressedLinkedItemHooks(duplicateSourceItems, () => vehicleActor.deleteEmbeddedDocuments(
       "Item",
-      duplicateSourceItems.map(item => item.id).filter(Boolean),
+      duplicateIds,
       buildSuppressedItemHookOptions()
-    );
+    ));
   }
 
   return {
@@ -243,46 +287,29 @@ async function removeDriverCloneItemsForVehicle(actor, vehicleActorUuid) {
 
   if (!cloneItemIds.length) return 0;
 
-  await actor.deleteEmbeddedDocuments("Item", cloneItemIds, buildSuppressedItemHookOptions());
+  const cloneItems = actor.items.filter(item => cloneItemIds.includes(item.id));
+
+  await withSuppressedLinkedItemHooks(cloneItems, () => actor.deleteEmbeddedDocuments(
+    "Item",
+    cloneItemIds,
+    buildSuppressedItemHookOptions()
+  ));
   return cloneItemIds.length;
 }
 
-async function upsertDriverVehicleClone(driverActor, vehicleActor, sourceItem) {
-  if (!isActorDocument(driverActor)) return { status: "missingDriver" };
-  if (!sourceItem) return { status: "missingSourceItem" };
-
-  const cloneItems = driverActor.items.filter(
-    item => getDriverCloneMetadata(item)?.vehicleActorUuid === vehicleActor.uuid
-  );
-
-  const cloneItemData = createDriverCloneItemData(vehicleActor, sourceItem);
-
-  if (!cloneItems.length) {
-    await driverActor.createEmbeddedDocuments("Item", [cloneItemData]);
-    return { status: "created" };
-  }
-
-  const [primaryClone, ...duplicateClones] = cloneItems;
-
-  await driverActor.updateEmbeddedDocuments("Item", [
-    {
-      _id: primaryClone.id,
-      ...cloneItemData
-    }
-  ], buildSuppressedItemHookOptions());
-
-  if (duplicateClones.length) {
-    await driverActor.deleteEmbeddedDocuments(
-      "Item",
-      duplicateClones.map(item => item.id).filter(Boolean),
-      buildSuppressedItemHookOptions()
-    );
-  }
-
-  return { status: "updated" };
+function getActorsWithVehicleCloneItems(vehicleActorUuid) {
+  return (game.actors ?? []).filter(actor => actor.items.some(
+    item => getDriverCloneMetadata(item)?.vehicleActorUuid === vehicleActorUuid
+  ));
 }
 
-async function upsertDriverVehicleCloneFromData(driverActor, vehicleActor, cloneItemData) {
+async function upsertDriverVehicleCloneWithItemData(
+  driverActor,
+  vehicleActor,
+  cloneItemData,
+  createdStatus = "created",
+  updatedStatus = "updated"
+) {
   if (!isActorDocument(driverActor)) return { status: "missingDriver" };
   if (!cloneItemData || typeof cloneItemData !== "object") return { status: "missingCloneItemData" };
 
@@ -292,27 +319,39 @@ async function upsertDriverVehicleCloneFromData(driverActor, vehicleActor, clone
 
   if (!cloneItems.length) {
     await driverActor.createEmbeddedDocuments("Item", [cloneItemData]);
-    return { status: "createdFromFallback" };
+    return { status: createdStatus };
   }
 
   const [primaryClone, ...duplicateClones] = cloneItems;
 
-  await driverActor.updateEmbeddedDocuments("Item", [
+  await withSuppressedLinkedItemHooks([primaryClone], () => driverActor.updateEmbeddedDocuments("Item", [
     {
       _id: primaryClone.id,
       ...cloneItemData
     }
-  ], buildSuppressedItemHookOptions());
+  ], buildSuppressedItemHookOptions()));
 
   if (duplicateClones.length) {
-    await driverActor.deleteEmbeddedDocuments(
+    const duplicateIds = duplicateClones.map(item => item.id).filter(Boolean);
+
+    await withSuppressedLinkedItemHooks(duplicateClones, () => driverActor.deleteEmbeddedDocuments(
       "Item",
-      duplicateClones.map(item => item.id).filter(Boolean),
+      duplicateIds,
       buildSuppressedItemHookOptions()
-    );
+    ));
   }
 
-  return { status: "updatedFromFallback" };
+  return { status: updatedStatus };
+}
+
+async function upsertDriverVehicleClone(driverActor, vehicleActor, sourceItem) {
+  if (!sourceItem) return { status: "missingSourceItem" };
+
+  return upsertDriverVehicleCloneWithItemData(
+    driverActor,
+    vehicleActor,
+    createDriverCloneItemData(vehicleActor, sourceItem)
+  );
 }
 
 function getCurrentDriverUuid(vehicleActor) {
@@ -330,8 +369,13 @@ export function isTwduVehicleItem(item) {
   return item?.documentName === "Item" && item.type === "vehicle";
 }
 
-export function shouldIgnoreTwduVehicleItemHooks(options) {
-  return Boolean(options?.[SUPPRESS_ITEM_HOOKS_OPTION]);
+export function shouldIgnoreTwduVehicleItemHooks(item, options) {
+  if (Boolean(options?.[SUPPRESS_ITEM_HOOKS_OPTION])) return true;
+
+  if (!item) return false;
+
+  const keys = getLinkedItemSuppressionKeys(item);
+  return keys.some(key => SUPPRESSED_LINKED_ITEM_KEYS.has(key));
 }
 
 export function getTwduVehicleItemSnapshot(actor) {
@@ -491,7 +535,7 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
 
   let removedClones = 0;
 
-  for (const actor of game.actors ?? []) {
+  for (const actor of getActorsWithVehicleCloneItems(vehicleActor.uuid)) {
     const isCurrentDriver = currentDriverUuid.length > 0 && actor.uuid === currentDriverUuid;
 
     if (isCurrentDriver && snapshot && isTwduActive) continue;
@@ -526,15 +570,17 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
 
   const upsertResult = snapshot
     ? await upsertDriverVehicleClone(currentDriver, vehicleActor, sourceItemResult.sourceItem)
-    : await upsertDriverVehicleCloneFromData(
+    : await upsertDriverVehicleCloneWithItemData(
       currentDriver,
       vehicleActor,
-      createFallbackDriverCloneItemData(vehicleActor)
+      createFallbackDriverCloneItemData(vehicleActor),
+      "createdFromFallback",
+      "updatedFromFallback"
     );
 
   const result = {
     status: "synced",
-    hasSnapshot: true,
+    hasSnapshot: Boolean(snapshot),
     hasDriver: true,
     removedClones,
     upsertStatus: upsertResult.status,
@@ -564,7 +610,7 @@ export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
 
   let removedClones = 0;
 
-  for (const actor of game.actors ?? []) {
+  for (const actor of getActorsWithVehicleCloneItems(vehicleActor.uuid)) {
     try {
       removedClones += await removeDriverCloneItemsForVehicle(actor, vehicleActor.uuid);
     } catch (_error) {

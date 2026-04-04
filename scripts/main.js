@@ -18,17 +18,11 @@ import {
   moveStorageItemFromDragData
 } from "./services/storage-transfer.service.js";
 import {
-  cleanupTwduLinksForDeletedVehicle,
-  clearVehicleDriverForDeletedTwduClone,
   isTwduSystemActive,
-  shouldIgnoreTwduVehicleItemHooks,
-  syncModuleVehicleFromTwduLinkedItem,
   syncTwduDriverVehicleClone
 } from "./services/twdu-vehicle-integration.service.js";
-import {
-  cleanupVehicleRoleReferencesForDeletedActor,
-  isVehicleActorDocument
-} from "./services/vehicle-actor.service.js";
+import { registerVehicleSyncHooks } from "./hooks/vehicle-sync.hooks.js";
+import { registerVehicleCleanupHooks } from "./hooks/vehicle-cleanup.hooks.js";
 import * as settingsApi from "./settings/access.js";
 import { registerSettings } from "./settings/register.js";
 
@@ -113,11 +107,6 @@ function getDropTargetActorSheet(event) {
   return app;
 }
 
-function changedDataHasPath(changedData, path) {
-  return foundry.utils.hasProperty(changedData, path)
-    || Object.prototype.hasOwnProperty.call(changedData, path);
-}
-
 async function onGlobalStorageItemDrop(event) {
   if (event.defaultPrevented) return;
 
@@ -181,119 +170,8 @@ Hooks.on("preCreateActor", actor => {
   actor.updateSource(updateData);
 });
 
-Hooks.on("updateActor", (actor, changedData) => {
-  if (!isTwduSystemActive()) return;
-
-  const isVehicleActor = actor.type === ACTOR_TYPES.VEHICLE
-    || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE);
-
-  if (!isVehicleActor) return;
-
-  const driverChanged = changedDataHasPath(changedData, "system.driver.actor");
-  const importedItemChanged = changedDataHasPath(changedData, `flags.${MODULE_ID}.twduVehicleItemSnapshot`);
-  const statsChanged = changedDataHasPath(changedData, "system.stats")
-    || changedDataHasPath(changedData, "system.stats.durability")
-    || changedDataHasPath(changedData, "system.stats.maneuverability")
-    || changedDataHasPath(changedData, "system.stats.damage")
-    || changedDataHasPath(changedData, "system.stats.armor");
-  const identityChanged = changedDataHasPath(changedData, "name")
-    || changedDataHasPath(changedData, "img");
-  const issuesChanged = changedDataHasPath(changedData, "system.summary")
-    || changedDataHasPath(changedData, "system.summary.issues");
-
-  if (!driverChanged && !importedItemChanged && !statsChanged && !identityChanged && !issuesChanged) return;
-
-  logger.debug("TWDU vehicle sync trigger detected on updateActor.", {
-    actorUuid: actor.uuid,
-    actorName: actor.name,
-    driverChanged,
-    importedItemChanged,
-    statsChanged,
-    identityChanged,
-    issuesChanged
-  });
-
-  void syncTwduDriverVehicleClone(actor).catch(error => {
-    logger.error("Failed to sync TWDU driver vehicle clone after actor update.", error);
-  });
-});
-
-Hooks.on("updateItem", (item, changedData, options) => {
-  if (!isTwduSystemActive()) return;
-  if (shouldIgnoreTwduVehicleItemHooks(options)) return;
-
-  const relevantVehicleFieldChanged = changedDataHasPath(changedData, "system")
-    || changedDataHasPath(changedData, "name")
-    || changedDataHasPath(changedData, "img")
-    || changedDataHasPath(changedData, "system.hull")
-    || changedDataHasPath(changedData, "system.maneuverability")
-    || changedDataHasPath(changedData, "system.manueverability")
-    || changedDataHasPath(changedData, "system.damage")
-    || changedDataHasPath(changedData, "system.armor")
-    || changedDataHasPath(changedData, "system.issue");
-
-  if (!relevantVehicleFieldChanged) return;
-
-  logger.debug("TWDU linked vehicle item reverse sync trigger detected on updateItem.", {
-    itemUuid: item.uuid,
-    itemName: item.name,
-    parentActorUuid: item.parent?.uuid ?? ""
-  });
-
-  void syncModuleVehicleFromTwduLinkedItem(item).catch(error => {
-    logger.error("Failed to sync module vehicle actor from linked TWDU vehicle item update.", error);
-  });
-});
-
-Hooks.on("deleteItem", (item, options) => {
-  if (!isTwduSystemActive()) return;
-  if (shouldIgnoreTwduVehicleItemHooks(options)) return;
-
-  logger.debug("TWDU linked driver clone deletion detected on deleteItem.", {
-    itemUuid: item.uuid,
-    itemName: item.name,
-    parentActorUuid: item.parent?.uuid ?? ""
-  });
-
-  void clearVehicleDriverForDeletedTwduClone(item).catch(error => {
-    logger.error("Failed to clear module vehicle driver after linked TWDU clone deletion.", error);
-  });
-});
-
-Hooks.on("deleteActor", actor => {
-  void cleanupVehicleRoleReferencesForDeletedActor(actor)
-    .then(result => {
-      if (result.status !== "cleaned") return;
-      if (!result.updatedVehicles && !result.clearedOwner && !result.clearedDriver && !result.removedPassengers) return;
-
-      logger.debug("Cleaned vehicle role references after actor deletion.", {
-        deletedActorUuid: actor?.uuid ?? "",
-        deletedActorName: actor?.name ?? "",
-        result
-      });
-    })
-    .catch(error => {
-      logger.error("Failed to clean vehicle role references after actor deletion.", error);
-    });
-
-  if (!isTwduSystemActive()) return;
-  if (!isVehicleActorDocument(actor)) return;
-
-  void cleanupTwduLinksForDeletedVehicle(actor)
-    .then(result => {
-      if (result.status !== "cleaned") return;
-      if (!result.removedClones) return;
-
-      logger.debug("Cleaned TWDU linked driver vehicle clone items after vehicle deletion.", {
-        deletedVehicleUuid: actor?.uuid ?? "",
-        deletedVehicleName: actor?.name ?? "",
-        result
-      });
-    })
-    .catch(error => {
-      logger.error("Failed to clean TWDU linked items after vehicle deletion.", error);
-    });
-});
+registerVehicleSyncHooks();
+registerVehicleCleanupHooks();
 
 Hooks.once("init", () => {
   registerActorDataModels();
