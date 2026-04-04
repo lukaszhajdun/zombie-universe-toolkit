@@ -386,3 +386,65 @@ export async function removeVehiclePassengerByIndex(actor, passengerIndex) {
   passengers.splice(passengerIndex, 1);
   await actor.update({ "system.passengers": passengers });
 }
+
+export async function cleanupVehicleRoleReferencesForDeletedActor(deletedActor) {
+  if (!deletedActor || deletedActor.documentName !== "Actor") {
+    return {
+      status: "invalidDeletedActor",
+      updatedVehicles: 0,
+      clearedOwner: 0,
+      clearedDriver: 0,
+      removedPassengers: 0
+    };
+  }
+
+  const deletedReference = createActorReference(deletedActor);
+  let updatedVehicles = 0;
+  let clearedOwner = 0;
+  let clearedDriver = 0;
+  let removedPassengers = 0;
+
+  for (const actor of game.actors ?? []) {
+    if (!isVehicleActorDocument(actor)) continue;
+    if (actor.uuid === deletedActor.uuid) continue;
+
+    const updateData = {};
+
+    const ownerReference = getVehicleOwnerReference(actor);
+    if (ownerReference && isSameActorReference(ownerReference, deletedReference)) {
+      updateData["system.owner.actor"] = { ...EMPTY_ACTOR_REFERENCE };
+      clearedOwner += 1;
+    }
+
+    const driverReference = getVehicleDriverReference(actor);
+    if (driverReference && isSameActorReference(driverReference, deletedReference)) {
+      updateData["system.driver.actor"] = { ...EMPTY_ACTOR_REFERENCE };
+      clearedDriver += 1;
+    }
+
+    const passengers = getVehiclePassengersArray(actor);
+    if (passengers.length) {
+      const filteredPassengers = passengers.filter(
+        passengerReference => !isSameActorReference(passengerReference, deletedReference)
+      );
+
+      if (filteredPassengers.length !== passengers.length) {
+        updateData["system.passengers"] = filteredPassengers;
+        removedPassengers += passengers.length - filteredPassengers.length;
+      }
+    }
+
+    if (!Object.keys(updateData).length) continue;
+
+    await actor.update(updateData);
+    updatedVehicles += 1;
+  }
+
+  return {
+    status: "cleaned",
+    updatedVehicles,
+    clearedOwner,
+    clearedDriver,
+    removedPassengers
+  };
+}

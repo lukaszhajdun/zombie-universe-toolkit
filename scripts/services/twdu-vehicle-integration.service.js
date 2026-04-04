@@ -492,3 +492,28 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
 
   return result;
 }
+
+export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return {
+      status: "invalidVehicleActor",
+      removedClones: 0
+    };
+  }
+
+  let removedClones = 0;
+
+  for (const actor of game.actors ?? []) {
+    try {
+      removedClones += await removeDriverCloneItemsForVehicle(actor, vehicleActor.uuid);
+    } catch (_error) {
+      // Ignore per-actor cleanup errors to avoid blocking actor deletion flow.
+    }
+  }
+
+  return {
+    status: "cleaned",
+    removedClones,
+    vehicleActorUuid: vehicleActor.uuid
+  };
+}
