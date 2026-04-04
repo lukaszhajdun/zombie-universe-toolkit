@@ -305,6 +305,14 @@
   min-width: 0;
 }
 
+.zut-vehicle-text-panel .zut-field__textarea {
+  height: 5.25rem;
+  min-height: 5.25rem;
+  max-height: 5.25rem;
+  overflow-y: auto;
+  resize: none;
+}
+
 @media (max-width: 1180px) {
   .zut-vehicle-shell__top {
     grid-template-columns: minmax(220px, 0.9fr) minmax(240px, 1fr) minmax(260px, 1fr);
