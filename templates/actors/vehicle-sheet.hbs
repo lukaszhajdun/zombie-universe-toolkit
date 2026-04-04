@@ -53,7 +53,10 @@
         </section>
 
         <section class="zut-sheet__section zut-vehicle-details-panel">
-          <div class="zut-field">
+          <div
+            class="zut-field zut-drop-zone zut-vehicle-type-dropzone"
+            data-drop-zone="vehicle-item-template"
+          >
             <label class="zut-field__label" for="{{rootId}}-vehicle-type">
               {{localize "ZUT.Sheets.Vehicle.Fields.VehicleType"}}
             </label>
@@ -66,6 +69,10 @@
               placeholder="{{localize "ZUT.Sheets.Vehicle.Placeholders.VehicleType"}}"
               {{#unless editable}}disabled{{/unless}}
             >
+
+            <p class="zut-vehicle-type-dropzone__hint zut-muted">
+              {{localize "ZUT.Sheets.Vehicle.Fields.VehicleTypeDropHint"}}
+            </p>
           </div>
 
           <div class="zut-field">

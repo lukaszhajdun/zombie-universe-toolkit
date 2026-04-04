@@ -17,6 +17,10 @@ import {
   isStorageTransferDragData,
   moveStorageItemFromDragData
 } from "./services/storage-transfer.service.js";
+import {
+  isTwduSystemActive,
+  syncTwduDriverVehicleClone
+} from "./services/twdu-vehicle-integration.service.js";
 import * as settingsApi from "./settings/access.js";
 import { registerSettings } from "./settings/register.js";
 
@@ -101,6 +105,11 @@ function getDropTargetActorSheet(event) {
   return app;
 }
 
+function changedDataHasPath(changedData, path) {
+  return foundry.utils.hasProperty(changedData, path)
+    || Object.prototype.hasOwnProperty.call(changedData, path);
+}
+
 async function onGlobalStorageItemDrop(event) {
   if (event.defaultPrevented) return;
 
@@ -164,6 +173,43 @@ Hooks.on("preCreateActor", actor => {
   actor.updateSource(updateData);
 });
 
+Hooks.on("updateActor", (actor, changedData) => {
+  if (!isTwduSystemActive()) return;
+
+  const isVehicleActor = actor.type === ACTOR_TYPES.VEHICLE
+    || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE);
+
+  if (!isVehicleActor) return;
+
+  const driverChanged = changedDataHasPath(changedData, "system.driver.actor");
+  const importedItemChanged = changedDataHasPath(changedData, `flags.${MODULE_ID}.twduVehicleItemSnapshot`);
+  const statsChanged = changedDataHasPath(changedData, "system.stats")
+    || changedDataHasPath(changedData, "system.stats.durability")
+    || changedDataHasPath(changedData, "system.stats.maneuverability")
+    || changedDataHasPath(changedData, "system.stats.damage")
+    || changedDataHasPath(changedData, "system.stats.armor");
+  const identityChanged = changedDataHasPath(changedData, "name")
+    || changedDataHasPath(changedData, "img");
+  const issuesChanged = changedDataHasPath(changedData, "system.summary")
+    || changedDataHasPath(changedData, "system.summary.issues");
+
+  if (!driverChanged && !importedItemChanged && !statsChanged && !identityChanged && !issuesChanged) return;
+
+  logger.debug("TWDU vehicle sync trigger detected on updateActor.", {
+    actorUuid: actor.uuid,
+    actorName: actor.name,
+    driverChanged,
+    importedItemChanged,
+    statsChanged,
+    identityChanged,
+    issuesChanged
+  });
+
+  void syncTwduDriverVehicleClone(actor).catch(error => {
+    logger.error("Failed to sync TWDU driver vehicle clone after actor update.", error);
+  });
+});
+
 Hooks.once("init", () => {
   registerActorDataModels();
   registerFactionActorSheet();
@@ -180,5 +226,18 @@ Hooks.once("setup", () => {
 
 Hooks.once("ready", () => {
   document.addEventListener("drop", onGlobalStorageItemDrop, true);
+
+  if (isTwduSystemActive()) {
+    const vehicleActors = game.actors?.filter(
+      actor => actor.type === ACTOR_TYPES.VEHICLE || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE)
+    ) ?? [];
+
+    for (const vehicleActor of vehicleActors) {
+      void syncTwduDriverVehicleClone(vehicleActor).catch(error => {
+        logger.error("Failed to sync TWDU driver vehicle clone during ready hook.", error);
+      });
+    }
+  }
+
   logger.info(game.i18n.localize(`${LOCALIZATION_PREFIX}.Log.Ready`));
 });

@@ -10,7 +10,12 @@ import {
   getActorRoleTransferTargetFromEvent,
   isActorRoleTransferEventForHost
 } from "../services/actor-role-transfer.service.js";
-import { getClosestDropZoneId } from "../services/dragdrop.service.js";
+import {
+  getClosestDropZoneId,
+  getDragDataFromEvent,
+  isItemDragData,
+  resolveItemFromDragData
+} from "../services/dragdrop.service.js";
 import { openActorReference } from "../services/actor-ref.service.js";
 import {
   addVehiclePassenger,
@@ -27,12 +32,19 @@ import {
   prepareVehiclePassengers,
   removeVehiclePassengerByIndex
 } from "../services/vehicle-actor.service.js";
+import {
+  getTwduVehicleItemSnapshot,
+  importTwduVehicleItemToModuleVehicle,
+  isTwduVehicleItem
+} from "../services/twdu-vehicle-integration.service.js";
 import { transferVehicleActorRole } from "../services/vehicle-role-transfer.service.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 import { openStorageWindow } from "./storage-window.js";
+import { logger } from "../core/logger.js";
 
 const { FilePicker } = foundry.applications.apps;
 const VEHICLE_TYPE = getQualifiedActorType(ACTOR_TYPES.VEHICLE);
+const VEHICLE_ITEM_DROP_ZONE_ID = "vehicle-item-template";
 
 export class VehicleActorSheet extends BaseModuleActorSheet {
   static get DEFAULT_OPTIONS() {
@@ -71,7 +83,7 @@ export class VehicleActorSheet extends BaseModuleActorSheet {
   }
 
   _getDropZoneIds() {
-    return ["owner", "driver", "passengers"];
+    return ["owner", "driver", "passengers", VEHICLE_ITEM_DROP_ZONE_ID];
   }
 
   _getDropZoneDropEffect(_dropZoneId, event) {
@@ -103,10 +115,54 @@ export class VehicleActorSheet extends BaseModuleActorSheet {
         passengersCount,
         passengerCapacity,
         occupancyCount,
-        isTrunkEnabled
+        isTrunkEnabled,
+        twduVehicleItemSnapshot: getTwduVehicleItemSnapshot(this.actor),
+        hasTwduVehicleItemSnapshot: Boolean(getTwduVehicleItemSnapshot(this.actor))
       },
       { inplace: false }
     );
+  }
+
+  async _onDrop(event) {
+    const dragData = getDragDataFromEvent(event);
+    const dropZoneId = getClosestDropZoneId(event);
+
+    if (dropZoneId === VEHICLE_ITEM_DROP_ZONE_ID && isItemDragData(dragData)) {
+      event.preventDefault();
+
+      if (!this.canEditDocument) {
+        ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.DropLocked"));
+        return null;
+      }
+
+      const droppedItem = await resolveItemFromDragData(dragData);
+      if (!droppedItem) {
+        ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.InvalidDrop"));
+        return null;
+      }
+
+      if (!isTwduVehicleItem(droppedItem)) {
+        ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.InvalidType"));
+        return null;
+      }
+
+      try {
+        const result = await importTwduVehicleItemToModuleVehicle(this.actor, droppedItem);
+        if (result.status !== "imported") {
+          ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.ImportFailed"));
+          return null;
+        }
+
+        ui.notifications?.info(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.Imported"));
+        return droppedItem;
+      } catch (error) {
+        logger.error("Failed to import TWDU vehicle item into module vehicle actor.", error);
+        ui.notifications?.error(game.i18n.localize("ZUT.Vehicle.ItemTemplate.Notifications.ImportFailed"));
+        return null;
+      }
+    }
+
+    return super._onDrop(event);
   }
 
   _getSheetClickActionMap() {

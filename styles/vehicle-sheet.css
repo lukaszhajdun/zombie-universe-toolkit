@@ -28,7 +28,7 @@
 }
 
 .zut-vehicle-column--left {
-  grid-template-rows: auto minmax(240px, 1fr) auto;
+  grid-template-rows: auto minmax(180px, 1fr) auto;
 }
 
 .zut-vehicle-column--middle {
@@ -74,12 +74,19 @@
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 240px;
+  min-height: 180px;
   overflow: hidden;
   border: 1px solid var(--zut-border-color);
   border-radius: var(--zut-radius-md);
   background: rgba(0, 0, 0, 0.18);
   box-sizing: border-box;
+}
+
+.zut-vehicle-type-dropzone__hint,
+.zut-vehicle-type-dropzone__source {
+  margin: var(--zut-space-1) 0 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
 }
 
 .zut-vehicle-details-panel,
@@ -210,6 +217,8 @@
   padding: 0;
   border: 0;
   background: transparent;
+  color: inherit;
+  font: inherit;
   text-align: left;
   cursor: pointer;
 }
@@ -256,6 +265,7 @@
 .zut-owner-card__name,
 .zut-passenger-card__name {
   font-weight: 600;
+  color: inherit;
   line-height: 1.2;
   overflow-wrap: anywhere;
 }

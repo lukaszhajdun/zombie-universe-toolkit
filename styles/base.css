@@ -50,6 +50,8 @@
   border: 1px solid var(--zut-border-color);
   border-radius: var(--zut-radius-sm);
   background: transparent;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
   flex: 0 0 auto;
 }
@@ -96,6 +98,8 @@
   border: 1px solid var(--zut-border-color);
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.16);
+  color: inherit;
+  font: inherit;
   cursor: pointer;
   flex: 0 0 auto;
 }
@@ -103,6 +107,7 @@
 .zut-lock-toggle i {
   font-size: 0.55rem;
   line-height: 1;
+  color: inherit;
 }
 
 .zut-lock-toggle.is-locked {
@@ -142,6 +147,8 @@
   border: 1px solid var(--zut-border-color);
   border-radius: var(--zut-radius-sm);
   background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  font: inherit;
   box-sizing: border-box;
 }
 

@@ -140,6 +140,15 @@
           "Full": "W pojeździe nie ma już wolnego miejsca dla kierowcy.",
           "MissingActor": "Nie udało się odnaleźć powiązanego aktora kierowcy."
         }
+      },
+      "ItemTemplate": {
+        "Notifications": {
+          "DropLocked": "Odblokuj edycję, aby zaimportować przedmiot pojazdu.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko przedmioty.",
+          "InvalidType": "W to miejsce można upuszczać tylko przedmioty pojazdu z systemu TWDU.",
+          "Imported": "Zaimportowano przedmiot pojazdu i zaktualizowano statystyki.",
+          "ImportFailed": "Nie udało się zaimportować danych przedmiotu pojazdu."
+        }
       }
     },
     "Sheets": {
@@ -198,6 +207,7 @@
         "Fields": {
           "Owner": "Właściciel",
           "VehicleType": "Typ pojazdu",
+          "VehicleTypeDropHint": "Przeciągnij tutaj przedmiot pojazdu, aby zaimportować statystyki.",
           "Seats": "Miejsca",
           "TrunkAccessible": "Bagażnik dostępny",
           "State": "Stan",

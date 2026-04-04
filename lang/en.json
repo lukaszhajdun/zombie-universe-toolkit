@@ -140,6 +140,15 @@
           "Full": "There is no free seat available for a driver.",
           "MissingActor": "The linked driver actor could not be found."
         }
+      },
+      "ItemTemplate": {
+        "Notifications": {
+          "DropLocked": "Unlock editing before importing a vehicle item.",
+          "InvalidDrop": "Only item documents can be dropped here.",
+          "InvalidType": "Only TWDU vehicle items can be dropped here.",
+          "Imported": "Vehicle item imported and stats updated.",
+          "ImportFailed": "Failed to import vehicle item data."
+        }
       }
     },
     "Sheets": {
@@ -198,6 +207,7 @@
         "Fields": {
           "Owner": "Owner",
           "VehicleType": "Vehicle Type",
+          "VehicleTypeDropHint": "Drag a vehicle item here to import stats.",
           "Seats": "Seats",
           "TrunkAccessible": "Trunk accessible",
           "State": "State",
