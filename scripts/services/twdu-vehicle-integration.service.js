@@ -389,6 +389,7 @@ export async function importTwduVehicleItemToModuleVehicle(vehicleActor, item) {
   const snapshot = createTwduVehicleItemSnapshot(item);
 
   const updateData = {
+    name: item.name ?? vehicleActor.name,
     "system.details.vehicleType": item.name ?? ""
   };
 
