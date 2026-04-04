@@ -42,7 +42,6 @@ import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 import { openStorageWindow } from "./storage-window.js";
 import { logger } from "../core/logger.js";
 
-const { FilePicker } = foundry.applications.apps;
 const VEHICLE_TYPE = getQualifiedActorType(ACTOR_TYPES.VEHICLE);
 const VEHICLE_ITEM_DROP_ZONE_ID = "vehicle-item-template";
 
@@ -330,25 +329,6 @@ export class VehicleActorSheet extends BaseModuleActorSheet {
         ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.Passengers.Notifications.InvalidDrop"));
         return null;
     }
-  }
-
-  async _onPortraitEdit(event) {
-    event.preventDefault();
-    if (!this.canEditDocument) return;
-
-    const current = this.actor.img ?? "";
-    const initialTarget = current.includes("/") ? current.split("/").slice(0, -1).join("/") : "";
-
-    const picker = new FilePicker({
-      type: "image",
-      current,
-      callback: async path => {
-        if (!path || path === this.actor.img) return;
-        await this.actor.update({ img: path });
-      }
-    });
-
-    await picker.browse(initialTarget);
   }
 
   async _handleOwnerDrop(actor) {

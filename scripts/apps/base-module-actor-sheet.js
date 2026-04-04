@@ -24,6 +24,7 @@ import { ActorRoleDnDFallbackStrategy } from "./controllers/actor-role-dnd-fallb
 
 const { ActorSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { FilePicker } = foundry.applications.apps;
 
 export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   #roleDnDController = new ActorRoleDnDController(this);
@@ -249,6 +250,25 @@ export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     if (!element.name?.trim()) return;
     void this._onAutoSaveFieldChangeForElement(element);
+  }
+
+  async _onPortraitEdit(event) {
+    event.preventDefault();
+    if (!this.canEditDocument) return;
+
+    const current = this.actor.img ?? "";
+    const initialTarget = current.includes("/") ? current.split("/").slice(0, -1).join("/") : "";
+
+    const picker = new FilePicker({
+      type: "image",
+      current,
+      callback: async path => {
+        if (!path || path === this.actor.img) return;
+        await this.actor.update({ img: path });
+      }
+    });
+
+    await picker.browse(initialTarget);
   }
 
   async #resolveInternalTransferActor(dragData) {

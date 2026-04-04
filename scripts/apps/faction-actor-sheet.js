@@ -18,7 +18,6 @@ import {
 } from "../services/faction-actor.service.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 
-const { FilePicker } = foundry.applications.apps;
 const FACTION_TYPE = getQualifiedActorType(ACTOR_TYPES.FACTION);
 
 export class FactionActorSheet extends BaseModuleActorSheet {
@@ -131,25 +130,6 @@ export class FactionActorSheet extends BaseModuleActorSheet {
         }
       }
     ];
-  }
-
-  async _onPortraitEdit(event) {
-    event.preventDefault();
-    if (!this.canEditDocument) return;
-
-    const current = this.actor.img ?? "";
-    const initialTarget = current.includes("/") ? current.split("/").slice(0, -1).join("/") : "";
-
-    const picker = new FilePicker({
-      type: "image",
-      current,
-      callback: async path => {
-        if (!path || path === this.actor.img) return;
-        await this.actor.update({ img: path });
-      }
-    });
-
-    await picker.browse(initialTarget);
   }
 
   async _onDropActor(event, actor) {
