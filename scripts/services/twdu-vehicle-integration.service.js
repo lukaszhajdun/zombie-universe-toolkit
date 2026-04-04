@@ -154,6 +154,27 @@ function createDriverCloneItemData(vehicleActor, sourceItem) {
   };
 }
 
+function createFallbackDriverCloneItemData(vehicleActor) {
+  const fallbackFlags = {
+    [MODULE_ID]: {
+      [DRIVER_CLONE_FLAG_KEY]: {
+        vehicleActorUuid: vehicleActor.uuid,
+        vehicleActorId: vehicleActor.id,
+        sourceItemUuid: "",
+        sourceItemId: ""
+      }
+    }
+  };
+
+  return {
+    name: vehicleActor?.name ?? "",
+    type: "vehicle",
+    img: vehicleActor?.img ?? "",
+    system: buildSynchronizedVehicleSystemData(vehicleActor, {}),
+    flags: fallbackFlags
+  };
+}
+
 function getVehicleSourceItems(vehicleActor) {
   if (!isActorDocument(vehicleActor)) return [];
 
@@ -259,6 +280,39 @@ async function upsertDriverVehicleClone(driverActor, vehicleActor, sourceItem) {
   }
 
   return { status: "updated" };
+}
+
+async function upsertDriverVehicleCloneFromData(driverActor, vehicleActor, cloneItemData) {
+  if (!isActorDocument(driverActor)) return { status: "missingDriver" };
+  if (!cloneItemData || typeof cloneItemData !== "object") return { status: "missingCloneItemData" };
+
+  const cloneItems = driverActor.items.filter(
+    item => getDriverCloneMetadata(item)?.vehicleActorUuid === vehicleActor.uuid
+  );
+
+  if (!cloneItems.length) {
+    await driverActor.createEmbeddedDocuments("Item", [cloneItemData]);
+    return { status: "createdFromFallback" };
+  }
+
+  const [primaryClone, ...duplicateClones] = cloneItems;
+
+  await driverActor.updateEmbeddedDocuments("Item", [
+    {
+      _id: primaryClone.id,
+      ...cloneItemData
+    }
+  ], buildSuppressedItemHookOptions());
+
+  if (duplicateClones.length) {
+    await driverActor.deleteEmbeddedDocuments(
+      "Item",
+      duplicateClones.map(item => item.id).filter(Boolean),
+      buildSuppressedItemHookOptions()
+    );
+  }
+
+  return { status: "updatedFromFallback" };
 }
 
 function getCurrentDriverUuid(vehicleActor) {
@@ -449,7 +503,7 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
     }
   }
 
-  if (!snapshot || !isActorDocument(currentDriver) || !isTwduActive) {
+  if (!isActorDocument(currentDriver) || !isTwduActive) {
     const result = {
       status: "cleaned",
       hasSnapshot: Boolean(snapshot),
@@ -470,7 +524,13 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
     return result;
   }
 
-  const upsertResult = await upsertDriverVehicleClone(currentDriver, vehicleActor, sourceItemResult.sourceItem);
+  const upsertResult = snapshot
+    ? await upsertDriverVehicleClone(currentDriver, vehicleActor, sourceItemResult.sourceItem)
+    : await upsertDriverVehicleCloneFromData(
+      currentDriver,
+      vehicleActor,
+      createFallbackDriverCloneItemData(vehicleActor)
+    );
 
   const result = {
     status: "synced",
