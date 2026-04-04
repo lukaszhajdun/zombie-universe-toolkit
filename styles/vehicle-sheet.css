@@ -28,7 +28,7 @@
 }
 
 .zut-vehicle-column--left {
-  grid-template-rows: auto minmax(180px, 1fr) auto;
+  grid-template-rows: auto minmax(185px, 0.95fr) auto auto;
 }
 
 .zut-vehicle-column--middle {
@@ -43,7 +43,8 @@
 
 .zut-vehicle-name-panel,
 .zut-vehicle-portrait-panel,
-.zut-vehicle-details-panel,
+.zut-vehicle-type-panel,
+.zut-vehicle-seats-panel,
 .zut-vehicle-owner-panel,
 .zut-vehicle-state-panel,
 .zut-vehicle-stats-panel,
@@ -89,9 +90,18 @@
   line-height: 1.2;
 }
 
-.zut-vehicle-details-panel,
+.zut-vehicle-type-panel,
+.zut-vehicle-seats-panel,
 .zut-vehicle-stats-panel {
   justify-content: start;
+}
+
+.zut-vehicle-type-panel {
+  margin-top: 0.06rem;
+}
+
+.zut-vehicle-seats-panel {
+  margin-top: 0.06rem;
 }
 
 .zut-vehicle-trunk-panel {
@@ -118,6 +128,7 @@
 .zut-vehicle-trunk-panel__open {
   width: fit-content;
   min-width: 120px;
+  margin-top: 0;
   padding: 0.35rem 0.7rem;
   border: 1px solid var(--zut-border-color);
   border-radius: var(--zut-radius-sm);
