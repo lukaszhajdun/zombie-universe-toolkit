@@ -273,6 +273,80 @@
         }
       }
     },
+    "Macros": {
+      "Complications": {
+        "Title": "Mechanika komplikacji",
+        "Intro": "Wykonaj jeden rzut dla sceny. Jeśli pojawi się komplikacja, makro dolosuje też Źródło zagrożenia, Efekt i opcjonalny Charakter komplikacji.",
+        "Labels": {
+          "Stage": "Etap apokalipsy",
+          "Risk": "Poziom zagrożenia sceny"
+        },
+        "Stage": {
+          "early": {
+            "Label": "Wczesna apokalipsa",
+            "Hint": "Niższy bazowy próg komplikacji, ale w niebezpiecznych miejscach problemy nadal szybko się pojawiają."
+          },
+          "full": {
+            "Label": "Pełna apokalipsa",
+            "Hint": "Domyślny balans dla świata, w którym zagrożenie jest stałe, a zasoby są już napięte."
+          },
+          "late": {
+            "Label": "Późna apokalipsa",
+            "Hint": "Najsurowszy etap. Komplikacje wpadają częściej i łatwiej dostają dodatkowy Charakter."
+          }
+        },
+        "Risk": {
+          "shelter": {
+            "Label": "Schronienie / bezpieczniej",
+            "Hint": "Względne bezpieczeństwo obniża próg komplikacji o 10."
+          },
+          "standard": {
+            "Label": "Standardowy teren",
+            "Hint": "Normalne ryzyko. Bez modyfikatora do progu komplikacji."
+          },
+          "danger": {
+            "Label": "Bardzo niebezpieczne",
+            "Hint": "Scena jest na tyle wroga, że podnosi próg komplikacji o 10."
+          }
+        },
+        "Preview": {
+          "Threshold": "Próg komplikacji",
+          "ThresholdMeta": "Baza {base}, modyfikator {modifier}",
+          "Character": "Szansa na Charakter",
+          "CharacterMeta": "Na d10: 1-{max}"
+        },
+        "Note": "Pełny rzut trzyma się Twojej procedury: najpierw sprawdza, czy komplikacja w ogóle występuje, potem losuje Źródło zagrożenia i Efekt, a na końcu testuje Charakter komplikacji.",
+        "Buttons": {
+          "RollFull": "Rzuć: Komplikacja",
+          "RollSource": "Rzuć: Źródło",
+          "RollEffect": "Rzuć: Efekt",
+          "RollCharacter": "Rzuć: Charakter",
+          "Close": "Zamknij"
+        },
+        "Chat": {
+          "Roll": "Rzut",
+          "TestRoll": "Rzut testowy",
+          "Threshold": "Próg",
+          "Stage": "Etap",
+          "Risk": "Zagrożenie sceny",
+          "Source": "Źródło zagrożenia",
+          "Effect": "Efekt",
+          "Character": "Charakter",
+          "CharacterTest": "Test Charakteru",
+          "NoCharacter": "Brak",
+          "Badge": {
+            "Complication": "Komplikacja",
+            "NoComplication": "Brak komplikacji"
+          },
+          "SuccessText": "Coś w tej scenie obraca się przeciwko grupie. Świat przesuwa się o krok w gorszą stronę, a dalsza droga staje się cięższa, brutalniejsza albo bardziej kosztowna.",
+          "FailureText": "Na razie świat wstrzymuje oddech. Z tej sceny nie rodzi się nowa komplikacja, ale w takich realiach spokój nigdy nie trwa długo."
+        },
+        "Errors": {
+          "DialogUnavailable": "DialogV2 nie jest dostępny w tej wersji Foundry.",
+          "InvalidTableLengths": "Tabele komplikacji mają nieprawidłową liczbę wpisów."
+        }
+      }
+    },
     "Storage": {
       "Window": {
         "Title": "{storage} — {actor}",

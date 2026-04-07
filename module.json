@@ -69,7 +69,8 @@
       "sorting": "m",
       "packs": [
         "macros"
-      ]
+      ],
+      "folders": []
     }
   ],
   "documentTypes": {

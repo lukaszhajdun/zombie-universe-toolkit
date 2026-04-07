@@ -273,6 +273,80 @@
         }
       }
     },
+    "Macros": {
+      "Complications": {
+        "Title": "Complication Mechanic",
+        "Intro": "Roll once for the scene. If a complication appears, the macro also rolls the source of danger, the effect, and the optional character of the complication.",
+        "Labels": {
+          "Stage": "Apocalypse stage",
+          "Risk": "Scene danger"
+        },
+        "Stage": {
+          "early": {
+            "Label": "Early Apocalypse",
+            "Hint": "Lower base complication threshold, but trouble can still surface in unsafe places."
+          },
+          "full": {
+            "Label": "Full Apocalypse",
+            "Hint": "Default balance for a world where danger is constant and resources are already strained."
+          },
+          "late": {
+            "Label": "Late Apocalypse",
+            "Hint": "The harshest stage. Complications hit more often and gain character more easily."
+          }
+        },
+        "Risk": {
+          "shelter": {
+            "Label": "Shelter / safer place",
+            "Hint": "Relative safety lowers the complication threshold by 10."
+          },
+          "standard": {
+            "Label": "Standard terrain",
+            "Hint": "Normal risk. No modifier to the complication threshold."
+          },
+          "danger": {
+            "Label": "Very dangerous place",
+            "Hint": "The scene is hostile enough to raise the complication threshold by 10."
+          }
+        },
+        "Preview": {
+          "Threshold": "Complication threshold",
+          "ThresholdMeta": "Base {base}, modifier {modifier}",
+          "Character": "Character chance",
+          "CharacterMeta": "On d10: 1-{max}"
+        },
+        "Note": "The full roll follows your procedure in order: test whether a complication happens, then roll Source of Danger and Effect, and finally test for Character.",
+        "Buttons": {
+          "RollFull": "Roll: Complication",
+          "RollSource": "Roll: Source",
+          "RollEffect": "Roll: Effect",
+          "RollCharacter": "Roll: Character",
+          "Close": "Close"
+        },
+        "Chat": {
+          "Roll": "Roll",
+          "TestRoll": "Test roll",
+          "Threshold": "Threshold",
+          "Stage": "Stage",
+          "Risk": "Risk",
+          "Source": "Source of danger",
+          "Effect": "Effect",
+          "Character": "Character",
+          "CharacterTest": "Character test",
+          "NoCharacter": "None",
+          "Badge": {
+            "Complication": "Complication",
+            "NoComplication": "No complication"
+          },
+          "SuccessText": "Something in this scene turns against the group. The world shifts just enough to make the next step harder, meaner, or more costly.",
+          "FailureText": "For now, the world holds its breath. No new complication rises out of this scene, but that kind of peace never lasts for long."
+        },
+        "Errors": {
+          "DialogUnavailable": "DialogV2 is not available in this Foundry version.",
+          "InvalidTableLengths": "Complication tables have invalid lengths."
+        }
+      }
+    },
     "Storage": {
       "Window": {
         "Title": "{storage} — {actor}",
