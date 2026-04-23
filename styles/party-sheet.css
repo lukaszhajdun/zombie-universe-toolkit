@@ -1,0 +1,107 @@
+.zut-party-shell {
+  min-width: 0;
+}
+
+.zut-party-shell__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-3);
+  min-width: 0;
+}
+
+.zut-party-header-panel,
+.zut-party-members-panel {
+  min-width: 0;
+}
+
+.zut-party-header-panel__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--zut-space-3);
+  align-items: center;
+  min-width: 0;
+}
+
+.zut-party-header-panel__identity {
+  min-width: 0;
+}
+
+.zut-party-header-panel__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--zut-space-2);
+}
+
+.zut-party-header-panel__portrait-slot,
+.zut-party-header-panel__count-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zut-party-header__portrait {
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+.zut-party-header__count {
+  width: 96px;
+  min-width: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--zut-space-2);
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.14);
+  box-sizing: border-box;
+}
+
+.zut-party-header__count-label {
+  font-size: 0.75rem;
+  color: var(--zut-muted-text);
+}
+
+.zut-party-header__count-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.zut-party-members-panel__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  min-height: 18rem;
+}
+
+.zut-party-members-panel__empty {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 100%;
+  align-self: stretch;
+}
+
+@media (max-width: 640px) {
+  .zut-party-header-panel__grid {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .zut-party-header-panel__portrait-slot,
+  .zut-party-header-panel__count-slot {
+    justify-content: flex-start;
+  }
+
+  .zut-party-header__count {
+    width: 100%;
+    min-width: 0;
+  }
+}

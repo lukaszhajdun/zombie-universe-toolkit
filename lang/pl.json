@@ -29,6 +29,16 @@
             "Hint": "Jeśli włączone, nowo tworzeni aktorzy Group będą mieli w Prototype Token włączone Lock Artwork Rotation."
           }
         },
+        "Party": {
+          "DefaultLinkActorData": {
+            "Name": "Party Actor: domyślne Link Actor Data",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Party będą mieli w Prototype Token włączone Link Actor Data."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Party Actor: domyślne Lock Artwork Rotation",
+            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Party będą mieli w Prototype Token włączone Lock Artwork Rotation."
+          }
+        },
         "Vehicle": {
           "DefaultLinkActorData": {
             "Name": "Vehicle Actor: domyślne Link Actor Data",
@@ -69,6 +79,20 @@
           "Added": "Aktor został dodany do grupy.",
           "AlreadyAdded": "Ten aktor jest już w grupie.",
           "CannotAddSelf": "Nie możesz dodać aktora grupy do samego siebie.",
+          "DropLocked": "Odblokuj edycję, aby dodawać członków.",
+          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
+          "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
+        }
+      }
+    },
+    "Party": {
+      "Members": {
+        "UnknownName": "Nieznany aktor",
+        "MissingActorLabel": "Nie znaleziono aktora",
+        "Notifications": {
+          "Added": "Aktor został dodany do drużyny.",
+          "AlreadyAdded": "Ten aktor jest już w drużynie.",
+          "CannotAddSelf": "Nie możesz dodać aktora drużyny do samego siebie.",
           "DropLocked": "Odblokuj edycję, aby dodawać członków.",
           "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
           "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
@@ -195,6 +219,24 @@
           "Location": "np. Północna autostrada",
           "Description": "Opisz grupę...",
           "Notes": "Dodaj notatki do tej grupy..."
+        }
+      },
+      "Party": {
+        "Label": "Drużyna (ZU)",
+        "Sections": {
+          "Members": "Członkowie"
+        },
+        "Fields": {
+          "MemberCount": "Członkowie"
+        },
+        "Actions": {
+          "RemoveMember": "Usuń członka"
+        },
+        "Empty": {
+          "Members": "Nie dodano jeszcze członków drużyny. Przeciągnij tutaj aktorów."
+        },
+        "Placeholders": {
+          "Name": "Nazwa drużyny"
         }
       },
       "Vehicle": {
@@ -399,10 +441,12 @@
   "TYPES": {
     "Actor": {
       "group": "Grupa",
+      "party": "Drużyna",
       "vehicle": "Pojazd",
       "faction": "Frakcja",
       "zombie-universe-toolkit": {
         "group": "Grupa (ZU)",
+        "party": "Drużyna (ZU)",
         "vehicle": "Pojazd (ZU)",
         "faction": "Frakcja (ZU)"
       }

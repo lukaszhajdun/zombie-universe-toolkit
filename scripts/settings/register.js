@@ -50,6 +50,15 @@ export function registerSettings() {
   );
 
   registerBooleanWorldSetting(
+    SETTINGS_KEYS.PARTY_DEFAULT_LINK_ACTOR_DATA,
+    "ActorTypes.Party.DefaultLinkActorData"
+  );
+  registerBooleanWorldSetting(
+    SETTINGS_KEYS.PARTY_DEFAULT_LOCK_ARTWORK_ROTATION,
+    "ActorTypes.Party.DefaultLockArtworkRotation"
+  );
+
+  registerBooleanWorldSetting(
     SETTINGS_KEYS.VEHICLE_DEFAULT_LINK_ACTOR_DATA,
     "ActorTypes.Vehicle.DefaultLinkActorData"
   );

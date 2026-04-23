@@ -9,6 +9,7 @@ import {
 import { logger } from "./core/logger.js";
 import { registerFactionActorSheet } from "./apps/faction-actor-sheet.js";
 import { registerGroupActorSheet } from "./apps/group-actor-sheet.js";
+import { registerPartyActorSheet } from "./apps/party-actor-sheet.js";
 import { registerVehicleActorSheet } from "./apps/vehicle-actor-sheet.js";
 import { openStorageWindow } from "./apps/storage-window.js";
 import { registerActorDataModels } from "./model/register-models.js";
@@ -29,6 +30,7 @@ import * as settingsApi from "./settings/access.js";
 import { registerSettings } from "./settings/register.js";
 
 const GROUP_ACTOR_PLACEHOLDER = `modules/${MODULE_ID}/assets/placeholders/group-actor.webp`;
+const PARTY_ACTOR_PLACEHOLDER = `modules/${MODULE_ID}/assets/placeholders/group-actor.webp`;
 const FACTION_ACTOR_PLACEHOLDER = `modules/${MODULE_ID}/assets/placeholders/faction-actor.webp`;
 const VEHICLE_ACTOR_PLACEHOLDER = `modules/${MODULE_ID}/assets/placeholders/vehicle-actor.webp`;
 
@@ -158,11 +160,16 @@ Hooks.on("preCreateActor", actor => {
   };
 
   const isGroupActor = actor.type === qualifyModuleActorType(ACTOR_TYPES.GROUP);
+  const isPartyActor = actor.type === qualifyModuleActorType(ACTOR_TYPES.PARTY);
   const isFactionActor = actor.type === qualifyModuleActorType(ACTOR_TYPES.FACTION);
   const isVehicleActor = actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE);
 
   if (isGroupActor) {
     applyActorPlaceholder(updateData, actor, GROUP_ACTOR_PLACEHOLDER);
+  }
+
+  if (isPartyActor) {
+    applyActorPlaceholder(updateData, actor, PARTY_ACTOR_PLACEHOLDER);
   }
 
   if (isFactionActor) {
@@ -183,6 +190,7 @@ Hooks.once("init", () => {
   registerActorDataModels();
   registerFactionActorSheet();
   registerGroupActorSheet();
+  registerPartyActorSheet();
   registerVehicleActorSheet();
   logger.info(game.i18n.localize(`${LOCALIZATION_PREFIX}.Log.Init`));
   registerSettings();

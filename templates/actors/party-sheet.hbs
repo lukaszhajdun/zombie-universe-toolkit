@@ -1,0 +1,142 @@
+<form class="zut-sheet zut-party-sheet {{cssClass}}" autocomplete="off">
+  <div class="zut-party-shell">
+    <div class="zut-party-shell__grid">
+      <section class="zut-sheet__section zut-party-header-panel">
+        <div class="zut-party-header-panel__grid">
+          <div class="zut-party-header-panel__identity">
+            <div class="zut-field">
+              <div class="zut-party-header-panel__title-row">
+                <button
+                  class="zut-lock-toggle {{#if isLocked}}is-locked{{else}}is-unlocked{{/if}}"
+                  type="button"
+                  data-lock-toggle="true"
+                  title="{{lockToggleTitle}}"
+                  aria-label="{{lockToggleLabel}}"
+                  {{#unless canToggleLock}}disabled{{/unless}}
+                >
+                  <i class="{{lockToggleIcon}}" aria-hidden="true"></i>
+                  <span class="zut-visually-hidden">{{lockToggleLabel}}</span>
+                </button>
+
+                <label class="zut-field__label" for="{{rootId}}-name">
+                  {{localize "ZUT.Sheets.Common.Fields.Name"}}
+                </label>
+              </div>
+
+              <input
+                id="{{rootId}}-name"
+                class="zut-field__input zut-field__input--title"
+                type="text"
+                name="name"
+                value="{{actor.name}}"
+                placeholder="{{localize "ZUT.Sheets.Party.Placeholders.Name"}}"
+                {{#unless editable}}disabled{{/unless}}
+              >
+            </div>
+          </div>
+
+          <div class="zut-party-header-panel__portrait-slot">
+            <button
+              class="zut-portrait-button zut-sheet__portrait zut-party-header__portrait {{#if canEdit}}is-editable{{/if}}"
+              type="button"
+              data-edit-image="true"
+              data-edit="img"
+              title="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+              aria-label="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+              {{#unless canEdit}}disabled{{/unless}}
+            >
+              <img
+                class="zut-sheet__portrait-image"
+                src="{{actor.img}}"
+                alt="{{actor.name}}"
+              >
+            </button>
+          </div>
+
+          <div class="zut-party-header-panel__count-slot">
+            <div class="zut-party-header__count">
+              <span class="zut-party-header__count-label">
+                {{localize "ZUT.Sheets.Party.Fields.MemberCount"}}
+              </span>
+              <span class="zut-party-header__count-value">{{membersCount}}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="zut-sheet__section zut-party-members-panel">
+        <div class="zut-field zut-field--panel">
+          <div
+            class="zut-field__label zut-field__label--section"
+            role="heading"
+            aria-level="2"
+          >
+            {{localize "ZUT.Sheets.Party.Sections.Members"}}
+          </div>
+
+          <div
+            class="zut-party-members-panel__body zut-drop-zone"
+            data-drop-zone="members"
+          >
+            {{#if hasMembers}}
+              <div class="zut-member-list">
+                {{#each members as |member|}}
+                  <article class="zut-member-card {{#unless member.exists}}zut-member-card--missing{{/unless}}">
+                    <button
+                      class="zut-member-card__main"
+                      type="button"
+                      data-member-open="true"
+                      data-member-index="{{member.index}}"
+                    >
+                      <span class="zut-member-card__media">
+                        <span class="zut-member-card__thumb">
+                          <img
+                            class="zut-member-card__image"
+                            src="{{member.img}}"
+                            alt="{{member.name}}"
+                          >
+                        </span>
+                      </span>
+
+                      <span class="zut-member-card__content">
+                        <span class="zut-member-card__name">{{member.name}}</span>
+
+                        {{#if member.typeLabel}}
+                          <span class="zut-member-card__meta zut-muted">{{member.typeLabel}}</span>
+                        {{/if}}
+
+                        {{#unless member.exists}}
+                          <span class="zut-member-card__missing zut-muted">
+                            {{localize "ZUT.Party.Members.MissingActorLabel"}}
+                          </span>
+                        {{/unless}}
+                      </span>
+                    </button>
+
+                    <button
+                      class="zut-inline-icon-button zut-member-card__remove"
+                      type="button"
+                      title="{{localize "ZUT.Sheets.Party.Actions.RemoveMember"}}"
+                      aria-label="{{localize "ZUT.Sheets.Party.Actions.RemoveMember"}}"
+                      data-member-remove="true"
+                      data-member-index="{{member.index}}"
+                      {{#unless @root.canEdit}}disabled{{/unless}}
+                    >
+                      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="zut-empty-state zut-party-members-panel__empty">
+                <p class="zut-empty-state__text">
+                  {{localize "ZUT.Sheets.Party.Empty.Members"}}
+                </p>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</form>

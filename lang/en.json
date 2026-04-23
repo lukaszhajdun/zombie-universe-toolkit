@@ -29,6 +29,16 @@
             "Hint": "If enabled, newly created Group actors will have Lock Artwork Rotation enabled in Prototype Token."
           }
         },
+        "Party": {
+          "DefaultLinkActorData": {
+            "Name": "Party Actor: Default Link Actor Data",
+            "Hint": "If enabled, newly created Party actors will have Link Actor Data enabled in Prototype Token."
+          },
+          "DefaultLockArtworkRotation": {
+            "Name": "Party Actor: Default Lock Artwork Rotation",
+            "Hint": "If enabled, newly created Party actors will have Lock Artwork Rotation enabled in Prototype Token."
+          }
+        },
         "Vehicle": {
           "DefaultLinkActorData": {
             "Name": "Vehicle Actor: Default Link Actor Data",
@@ -69,6 +79,20 @@
           "Added": "Actor added to the group.",
           "AlreadyAdded": "This actor is already in the group.",
           "CannotAddSelf": "You cannot add the group actor to itself.",
+          "DropLocked": "Unlock editing before adding members.",
+          "InvalidDrop": "Only actor documents can be dropped here.",
+          "MissingActor": "The linked actor could not be found."
+        }
+      }
+    },
+    "Party": {
+      "Members": {
+        "UnknownName": "Unknown Actor",
+        "MissingActorLabel": "Actor not found",
+        "Notifications": {
+          "Added": "Actor added to the party.",
+          "AlreadyAdded": "This actor is already in the party.",
+          "CannotAddSelf": "You cannot add the party actor to itself.",
           "DropLocked": "Unlock editing before adding members.",
           "InvalidDrop": "Only actor documents can be dropped here.",
           "MissingActor": "The linked actor could not be found."
@@ -195,6 +219,24 @@
           "Location": "e.g. Northern Highway",
           "Description": "Describe the group...",
           "Notes": "Add notes for this group..."
+        }
+      },
+      "Party": {
+        "Label": "Party (ZU)",
+        "Sections": {
+          "Members": "Members"
+        },
+        "Fields": {
+          "MemberCount": "Members"
+        },
+        "Actions": {
+          "RemoveMember": "Remove member"
+        },
+        "Empty": {
+          "Members": "No party members have been added yet. Drag actors here."
+        },
+        "Placeholders": {
+          "Name": "Party name"
         }
       },
       "Vehicle": {
@@ -399,10 +441,12 @@
   "TYPES": {
     "Actor": {
       "group": "Group",
+      "party": "Party",
       "vehicle": "Vehicle",
       "faction": "Faction",
       "zombie-universe-toolkit": {
         "group": "Group (ZU)",
+        "party": "Party (ZU)",
         "vehicle": "Vehicle (ZU)",
         "faction": "Faction (ZU)"
       }

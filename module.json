@@ -30,6 +30,9 @@
       "src": "styles/group-sheet.css"
     },
     {
+      "src": "styles/party-sheet.css"
+    },
+    {
       "src": "styles/vehicle-sheet.css"
     },
     {
@@ -76,6 +79,7 @@
   "documentTypes": {
     "Actor": {
       "group": {},
+      "party": {},
       "vehicle": {},
       "faction": {}
     }
