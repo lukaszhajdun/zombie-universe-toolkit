@@ -25,7 +25,10 @@ export class PartyActorSheet extends BaseModuleActorSheet {
 
     options.position = foundry.utils.mergeObject(
       options.position ?? {},
-      { width: 760 },
+      {
+        width: 760,
+        height: 700
+      },
       { inplace: false }
     );
 

@@ -3,7 +3,25 @@
     <div class="zut-party-shell__grid">
       <section class="zut-sheet__section zut-party-header-panel">
         <div class="zut-party-header-panel__grid">
-          <div class="zut-party-header-panel__identity">
+          <div class="zut-party-header-panel__portrait-slot">
+            <button
+              class="zut-portrait-button zut-sheet__portrait zut-party-header__portrait {{#if canEdit}}is-editable{{/if}}"
+              type="button"
+              data-edit-image="true"
+              data-edit="img"
+              title="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+              aria-label="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
+              {{#unless canEdit}}disabled{{/unless}}
+              >
+              <img
+                class="zut-sheet__portrait-image"
+                src="{{actor.img}}"
+                alt="{{actor.name}}"
+              >
+            </button>
+          </div>
+
+          <div class="zut-party-header-panel__content">
             <div class="zut-field">
               <div class="zut-party-header-panel__title-row">
                 <button
@@ -33,39 +51,21 @@
                 {{#unless editable}}disabled{{/unless}}
               >
             </div>
-          </div>
 
-          <div class="zut-party-header-panel__portrait-slot">
-            <button
-              class="zut-portrait-button zut-sheet__portrait zut-party-header__portrait {{#if canEdit}}is-editable{{/if}}"
-              type="button"
-              data-edit-image="true"
-              data-edit="img"
-              title="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
-              aria-label="{{localize "ZUT.Sheets.Common.Actions.EditPortrait"}}"
-              {{#unless canEdit}}disabled{{/unless}}
-            >
-              <img
-                class="zut-sheet__portrait-image"
-                src="{{actor.img}}"
-                alt="{{actor.name}}"
-              >
-            </button>
-          </div>
-
-          <div class="zut-party-header-panel__count-slot">
-            <div class="zut-party-header__count">
-              <span class="zut-party-header__count-label">
-                {{localize "ZUT.Sheets.Party.Fields.MemberCount"}}
-              </span>
-              <span class="zut-party-header__count-value">{{membersCount}}</span>
+            <div class="zut-party-header-panel__meta-row">
+              <div class="zut-party-header__count">
+                <span class="zut-party-header__count-label">
+                  {{localize "ZUT.Sheets.Party.Fields.MemberCount"}}
+                </span>
+                <span class="zut-party-header__count-value">{{membersCount}}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <section class="zut-sheet__section zut-party-members-panel">
-        <div class="zut-field zut-field--panel">
+        <div class="zut-party-members-panel__header">
           <div
             class="zut-field__label zut-field__label--section"
             role="heading"
@@ -73,7 +73,9 @@
           >
             {{localize "ZUT.Sheets.Party.Sections.Members"}}
           </div>
+        </div>
 
+        <div class="zut-field zut-field--panel">
           <div
             class="zut-party-members-panel__body zut-drop-zone"
             data-drop-zone="members"

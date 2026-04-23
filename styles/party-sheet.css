@@ -16,13 +16,16 @@
 
 .zut-party-header-panel__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: 96px minmax(0, 1fr);
   gap: var(--zut-space-3);
-  align-items: center;
+  align-items: stretch;
   min-width: 0;
 }
 
-.zut-party-header-panel__identity {
+.zut-party-header-panel__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-3);
   min-width: 0;
 }
 
@@ -32,11 +35,15 @@
   gap: var(--zut-space-2);
 }
 
-.zut-party-header-panel__portrait-slot,
-.zut-party-header-panel__count-slot {
+.zut-party-header-panel__portrait-slot {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+}
+
+.zut-party-header-panel__meta-row {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .zut-party-header__portrait {
@@ -50,21 +57,19 @@
 }
 
 .zut-party-header__count {
-  width: 96px;
-  min-width: 96px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  padding: var(--zut-space-2);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--zut-space-2);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   border: 1px solid var(--zut-border-color);
-  border-radius: var(--zut-radius-sm);
-  background: rgba(0, 0, 0, 0.14);
-  box-sizing: border-box;
+  border: 0;
 }
 
 .zut-party-header__count-label {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--zut-muted-text);
 }
 
@@ -73,13 +78,35 @@
   font-weight: 700;
 }
 
+.zut-party-members-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.zut-party-members-panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--zut-space-2);
+}
+
+.zut-party-members-panel .zut-field--panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .zut-party-members-panel__body {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  align-self: stretch;
   min-width: 0;
   width: 100%;
-  min-height: 18rem;
+  min-height: 20rem;
+  max-height: 20rem;
+  overflow-y: auto;
 }
 
 .zut-party-members-panel__empty {
@@ -92,16 +119,14 @@
 @media (max-width: 640px) {
   .zut-party-header-panel__grid {
     grid-template-columns: 1fr;
-    justify-items: start;
   }
 
   .zut-party-header-panel__portrait-slot,
-  .zut-party-header-panel__count-slot {
+  .zut-party-header-panel__meta-row {
     justify-content: flex-start;
   }
 
   .zut-party-header__count {
-    width: 100%;
-    min-width: 0;
+    flex-wrap: wrap;
   }
 }
