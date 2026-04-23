@@ -7,9 +7,9 @@ import { logger } from "../core/logger.js";
 import {
   clearVehicleDriverForDeletedTwduClone,
   isTwduSystemActive,
+  requestTwduDriverVehicleCloneSync,
   shouldIgnoreTwduVehicleItemHooks,
-  syncModuleVehicleFromTwduLinkedItem,
-  syncTwduDriverVehicleClone
+  syncModuleVehicleFromTwduLinkedItem
 } from "../services/twdu-vehicle-integration.service.js";
 
 function changedDataHasPath(changedData, path) {
@@ -50,7 +50,7 @@ export function registerVehicleSyncHooks() {
       issuesChanged
     });
 
-    void syncTwduDriverVehicleClone(actor).catch(error => {
+    void requestTwduDriverVehicleCloneSync(actor).catch(error => {
       logger.error("Failed to sync TWDU driver vehicle clone after actor update.", error);
     });
   });

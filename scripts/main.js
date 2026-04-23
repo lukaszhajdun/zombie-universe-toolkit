@@ -18,9 +18,11 @@ import {
   moveStorageItemFromDragData
 } from "./services/storage-transfer.service.js";
 import {
+  buildTwduVehicleCloneHolderIndex,
   isTwduSystemActive,
-  syncTwduDriverVehicleClone
+  requestTwduDriverVehicleCloneSync
 } from "./services/twdu-vehicle-integration.service.js";
+import { canViewStorage } from "./services/storage.service.js";
 import { registerVehicleSyncHooks } from "./hooks/vehicle-sync.hooks.js";
 import { registerVehicleCleanupHooks } from "./hooks/vehicle-cleanup.hooks.js";
 import * as settingsApi from "./settings/access.js";
@@ -38,6 +40,10 @@ async function openStorageViaApi(actorOrUuid, slotId) {
 
   if (actor?.documentName !== "Actor") {
     throw new Error("storage.open expected an Actor document or Actor UUID.");
+  }
+
+  if (!canViewStorage(actor)) {
+    throw new Error("storage.open requires ownership of the target actor.");
   }
 
   return openStorageWindow(actor, slotId);
@@ -194,9 +200,12 @@ Hooks.once("ready", () => {
     const vehicleActors = game.actors?.filter(
       actor => actor.type === ACTOR_TYPES.VEHICLE || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE)
     ) ?? [];
+    const cloneHolderIndex = buildTwduVehicleCloneHolderIndex();
 
     for (const vehicleActor of vehicleActors) {
-      void syncTwduDriverVehicleClone(vehicleActor).catch(error => {
+      void requestTwduDriverVehicleCloneSync(vehicleActor, {
+        cloneHolderIndex
+      }).catch(error => {
         logger.error("Failed to sync TWDU driver vehicle clone during ready hook.", error);
       });
     }

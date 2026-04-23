@@ -32,6 +32,10 @@ export function isStorageHostLocked(actor) {
   return actor.getFlag(MODULE_ID, ACTOR_FLAGS.EDIT_LOCKED) === true;
 }
 
+export function canViewStorage(actor) {
+  return isActorDocument(actor) && actor.isOwner;
+}
+
 export function getStorageSlotMetadata(actor, slotId) {
   const config = getSlotConfigOrThrow(actor, slotId);
   const enabled = readStorageProperty(actor, config.enabledPath, true) === true;
@@ -97,6 +101,8 @@ export function getStorageItems(actor, slotId) {
 }
 
 export function prepareStorageItems(actor, slotId) {
+  if (!canViewStorage(actor)) return [];
+
   const storage = getStorageSlotMetadata(actor, slotId);
 
   return getStorageItems(actor, slotId).map(item => ({

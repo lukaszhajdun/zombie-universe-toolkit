@@ -15,6 +15,8 @@ const DRIVER_CLONE_FLAG_KEY = "twduVehicleClone";
 const SOURCE_ITEM_FLAG_KEY = "twduVehicleSourceItem";
 const SUPPRESS_ITEM_HOOKS_OPTION = `${MODULE_ID}SuppressTwduVehicleItemHooks`;
 const SUPPRESSED_LINKED_ITEM_KEYS = new Set();
+const VEHICLE_SYNC_IN_FLIGHT = new Map();
+const VEHICLE_SYNC_PENDING = new Map();
 
 function isActorDocument(actor) {
   return actor?.documentName === "Actor";
@@ -303,6 +305,39 @@ function getActorsWithVehicleCloneItems(vehicleActorUuid) {
   ));
 }
 
+function getActorsWithVehicleCloneItemsFromIndex(cloneHolderIndex, vehicleActorUuid) {
+  if (!(cloneHolderIndex instanceof Map)) {
+    return getActorsWithVehicleCloneItems(vehicleActorUuid);
+  }
+
+  return [...(cloneHolderIndex.get(vehicleActorUuid) ?? [])];
+}
+
+export function buildTwduVehicleCloneHolderIndex(actors = game.actors ?? []) {
+  const index = new Map();
+
+  for (const actor of actors) {
+    const vehicleUuids = new Set();
+
+    for (const item of actor.items ?? []) {
+      const vehicleActorUuid = getDriverCloneMetadata(item)?.vehicleActorUuid;
+      if (typeof vehicleActorUuid !== "string" || !vehicleActorUuid.length) continue;
+      vehicleUuids.add(vehicleActorUuid);
+    }
+
+    for (const vehicleActorUuid of vehicleUuids) {
+      const existing = index.get(vehicleActorUuid);
+      if (existing) {
+        existing.push(actor);
+      } else {
+        index.set(vehicleActorUuid, [actor]);
+      }
+    }
+  }
+
+  return index;
+}
+
 async function upsertDriverVehicleCloneWithItemData(
   driverActor,
   vehicleActor,
@@ -516,6 +551,8 @@ export async function importTwduVehicleItemToModuleVehicle(vehicleActor, item) {
 }
 
 export async function syncTwduDriverVehicleClone(vehicleActor) {
+  const options = arguments[1] ?? {};
+
   if (!isModuleVehicleActor(vehicleActor)) {
     return { status: "invalidVehicleActor" };
   }
@@ -535,7 +572,7 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
 
   let removedClones = 0;
 
-  for (const actor of getActorsWithVehicleCloneItems(vehicleActor.uuid)) {
+  for (const actor of getActorsWithVehicleCloneItemsFromIndex(options.cloneHolderIndex, vehicleActor.uuid)) {
     const isCurrentDriver = currentDriverUuid.length > 0 && actor.uuid === currentDriverUuid;
 
     if (isCurrentDriver && snapshot && isTwduActive) continue;
@@ -601,6 +638,8 @@ export async function syncTwduDriverVehicleClone(vehicleActor) {
 }
 
 export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
+  const options = arguments[1] ?? {};
+
   if (!isModuleVehicleActor(vehicleActor)) {
     return {
       status: "invalidVehicleActor",
@@ -610,7 +649,7 @@ export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
 
   let removedClones = 0;
 
-  for (const actor of getActorsWithVehicleCloneItems(vehicleActor.uuid)) {
+  for (const actor of getActorsWithVehicleCloneItemsFromIndex(options.cloneHolderIndex, vehicleActor.uuid)) {
     try {
       removedClones += await removeDriverCloneItemsForVehicle(actor, vehicleActor.uuid);
     } catch (_error) {
@@ -623,4 +662,45 @@ export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
     removedClones,
     vehicleActorUuid: vehicleActor.uuid
   };
+}
+
+export async function requestTwduDriverVehicleCloneSync(vehicleActor, options = {}) {
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return { status: "invalidVehicleActor" };
+  }
+
+  const actorUuid = vehicleActor.uuid;
+  if (!actorUuid) {
+    return syncTwduDriverVehicleClone(vehicleActor, options);
+  }
+
+  const pendingOptions = VEHICLE_SYNC_PENDING.get(actorUuid) ?? {};
+  VEHICLE_SYNC_PENDING.set(actorUuid, {
+    ...pendingOptions,
+    ...options
+  });
+
+  if (VEHICLE_SYNC_IN_FLIGHT.has(actorUuid)) {
+    return VEHICLE_SYNC_IN_FLIGHT.get(actorUuid);
+  }
+
+  const syncPromise = (async () => {
+    let result = null;
+
+    while (VEHICLE_SYNC_PENDING.has(actorUuid)) {
+      const nextOptions = VEHICLE_SYNC_PENDING.get(actorUuid) ?? {};
+      VEHICLE_SYNC_PENDING.delete(actorUuid);
+      result = await syncTwduDriverVehicleClone(vehicleActor, nextOptions);
+    }
+
+    return result;
+  })();
+
+  VEHICLE_SYNC_IN_FLIGHT.set(actorUuid, syncPromise);
+
+  try {
+    return await syncPromise;
+  } finally {
+    VEHICLE_SYNC_IN_FLIGHT.delete(actorUuid);
+  }
 }

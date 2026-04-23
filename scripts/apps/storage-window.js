@@ -16,6 +16,7 @@ import {
 } from "../services/storage-transfer.service.js";
 import {
   openStorageItemSheet,
+  canViewStorage,
   prepareStorageWindowContext,
   removeStorageItem,
   updateStorageSlotCapacity
@@ -101,6 +102,10 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async _prepareContext(options) {
+    if (!canViewStorage(this.actor)) {
+      throw new Error("StorageWindow requires ownership of the target actor.");
+    }
+
     const context = await super._prepareContext(options);
 
     return foundry.utils.mergeObject(
@@ -335,17 +340,14 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
     switch (result.status) {
       case "stored":
       case "moved":
-        await this.#queueRefresh();
         ui.notifications?.info(game.i18n.localize("ZUT.Storage.Notifications.ItemMovedToStorage"));
         return;
 
       case "copied":
-        await this.#queueRefresh();
         ui.notifications?.info(game.i18n.localize("ZUT.Storage.Notifications.ItemCopiedToStorage"));
         return;
 
       case "alreadyStored":
-        await this.#queueRefresh();
         ui.notifications?.info(game.i18n.localize("ZUT.Storage.Notifications.ItemAlreadyInStorage"));
         return;
 
@@ -382,7 +384,6 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 
     switch (result.status) {
       case "removed":
-        await this.#queueRefresh();
         ui.notifications?.info(game.i18n.localize("ZUT.Storage.Notifications.ItemRemoved"));
         return;
 
@@ -402,7 +403,6 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 
     switch (result.status) {
       case "updated":
-        await this.#queueRefresh();
         return;
 
       case "locked":
@@ -431,6 +431,10 @@ export class StorageWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 }
 
 export function openStorageWindow(actor, slotId) {
+  if (!canViewStorage(actor)) {
+    throw new Error("openStorageWindow requires ownership of the target actor.");
+  }
+
   const app = new StorageWindow({ actor, slotId });
   app.render(true, { focus: true });
   return app;

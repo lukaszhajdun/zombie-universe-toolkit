@@ -152,7 +152,7 @@ export async function addItemToStorage(hostActor, slotId, item) {
 
   const createdItem = await copyItemToStorageHost(hostActor, slotId, item);
   if (!createdItem) {
-    return { status: "invalid" };
+    return { status: "createFailed" };
   }
 
   if (isActorDocument(item.parent)) {
@@ -191,9 +191,13 @@ export async function moveStorageItemToActor(sourceActor, slotId, itemId, target
 
   const createData = buildItemCreateData(item, "");
   const [createdItem] = await targetActor.createEmbeddedDocuments("Item", [createData]);
+  if (!createdItem) {
+    return { status: "createFailed" };
+  }
+
   await item.delete();
 
-  return { status: "movedToActor", item: createdItem ?? null, targetActor };
+  return { status: "movedToActor", item: createdItem, targetActor };
 }
 
 export async function moveStorageItemFromDragData(dragData, targetActor) {
