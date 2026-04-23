@@ -1,1 +1,6 @@
-2026/04/07-20:49:28.093 5f18 Delete type=3 #1
+2026/04/07-21:50:45.181 9310 Log #52: 2 ops saved to Table #53 OK
+2026/04/07-21:50:45.181 9310 Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/000052.log: OK
+2026/04/07-21:50:45.182 9310 Table #5: 2 entries OK
+2026/04/07-21:50:45.182 9310 Table #53: 2 entries OK
+2026/04/07-21:50:45.183 9310 Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/MANIFEST-000051: OK
+2026/04/07-21:50:45.185 9310 **** Repaired leveldb ..\Data\modules\zombie-universe-toolkit\packs\macros; recovered 2 files; 1471 bytes. Some data may have been lost. ****
