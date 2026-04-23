@@ -44,7 +44,9 @@
   flex-direction: column;
   min-width: 0;
   width: 100%;
-  min-height: 18rem;
+  min-height: 45rem;
+  max-height: 45rem;
+  overflow-y: auto;
 }
 
 .zut-group-members-panel__empty {
