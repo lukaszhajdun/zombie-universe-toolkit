@@ -53,11 +53,42 @@
             </div>
 
             <div class="zut-party-header-panel__meta-row">
-              <div class="zut-party-header__count">
-                <span class="zut-party-header__count-label">
-                  {{localize "ZUT.Sheets.Party.Fields.MemberCount"}}
-                </span>
-                <span class="zut-party-header__count-value">{{membersCount}}</span>
+              <div class="zut-party-header-panel__meta-grid">
+                <div class="zut-party-meta-card zut-party-meta-card--count">
+                  <span class="zut-party-meta-card__label">
+                    {{localize "ZUT.Sheets.Party.Fields.MemberCount"}}
+                  </span>
+                  <span class="zut-party-meta-card__value">{{membersCount}}</span>
+                </div>
+
+                <div class="zut-party-meta-card zut-party-meta-card--source">
+                  <label class="zut-party-source-control" for="{{rootId}}-skill-source-enabled">
+                    <input
+                      id="{{rootId}}-skill-source-enabled"
+                      class="zut-party-source-control__checkbox"
+                      type="checkbox"
+                      name="system.details.skillSourceEnabled"
+                      {{#if skillSourceEnabled}}checked{{/if}}
+                      {{#unless editable}}disabled{{/unless}}
+                    >
+                    <span class="zut-party-source-control__label">
+                      {{localize "ZUT.Sheets.Party.Fields.SkillSource"}}
+                    </span>
+                  </label>
+
+                  <select
+                    id="{{rootId}}-skill-source-target"
+                    class="zut-field__input zut-party-source-control__select"
+                    name="system.details.skillSourceTarget"
+                    {{#unless editable}}disabled{{else}}{{#unless skillSourceEnabled}}disabled{{/unless}}{{/unless}}
+                  >
+                    {{#each skillSourceOptions as |option|}}
+                      <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>
+                        {{option.label}}
+                      </option>
+                    {{/each}}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -138,6 +169,78 @@
             {{/if}}
           </div>
         </div>
+      </section>
+
+      <section class="zut-sheet__section zut-party-tactical-panel">
+        <div class="zut-party-tactical-panel__header">
+          <div
+            class="zut-field__label zut-field__label--section"
+            role="heading"
+            aria-level="2"
+          >
+            {{localize "ZUT.Sheets.Party.Sections.Tactical"}}
+          </div>
+        </div>
+
+        {{#if hasTacticalData}}
+          <div class="zut-party-tactical-system-grid">
+            {{#each tactical.attributeGroups as |group|}}
+              <section class="zut-party-tactical-group" data-attribute-group="{{group.key}}">
+                <div class="zut-party-tactical-group__header">
+                  <button
+                    class="zut-party-rollable zut-party-tactical-group__label"
+                    type="button"
+                    data-party-roll="true"
+                    data-roll-kind="attribute"
+                    data-roll-key="{{group.attribute.key}}"
+                    {{#unless group.attribute.hasValue}}disabled{{/unless}}
+                  >
+                    {{group.attribute.label}}
+                  </button>
+
+                  <input
+                    class="zut-party-tactical-group__value"
+                    type="text"
+                    value="{{#if group.attribute.hasValue}}{{group.attribute.value}}{{/if}}"
+                    readonly
+                    tabindex="-1"
+                  >
+                </div>
+
+                <div class="zut-party-tactical-group__skills">
+                  {{#each group.skills as |skill|}}
+                    <div class="zut-party-tactical-skill-row">
+                      <button
+                        class="zut-party-rollable zut-party-tactical-skill-row__label"
+                        type="button"
+                        data-party-roll="true"
+                        data-roll-kind="skill"
+                        data-roll-key="{{skill.key}}"
+                        {{#unless skill.hasValue}}disabled{{/unless}}
+                      >
+                        {{skill.label}}
+                      </button>
+
+                      <input
+                        class="zut-party-tactical-skill-row__value"
+                        type="text"
+                        value="{{#if skill.hasValue}}{{skill.value}}{{/if}}"
+                        readonly
+                        tabindex="-1"
+                      >
+                    </div>
+                  {{/each}}
+                </div>
+              </section>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="zut-empty-state">
+            <p class="zut-empty-state__text">
+              {{localize "ZUT.Party.Tactical.Empty.UnsupportedMembers"}}
+            </p>
+          </div>
+        {{/if}}
       </section>
     </div>
   </div>

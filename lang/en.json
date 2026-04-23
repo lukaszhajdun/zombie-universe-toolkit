@@ -97,6 +97,26 @@
           "InvalidDrop": "Only actor documents can be dropped here.",
           "MissingActor": "The linked actor could not be found."
         }
+      },
+      "Tactical": {
+        "Sections": {
+          "Attributes": "Best Attributes",
+          "Skills": "Best Skills"
+        },
+        "Summary": "Supported TWDU members",
+        "Notifications": {
+          "NoValue": "This party test has no aggregated value yet."
+        },
+        "Breakdowns": {
+          "Attribute": "{label} {value}",
+          "PcSkill": "{attributeLabel} {attributeValue} + {skillLabel} {skillValue}",
+          "NpcSkill": "NPC skill {value}"
+        },
+        "Empty": {
+          "Attribute": "No supported character provides this attribute yet.",
+          "Skill": "No supported member provides this skill yet.",
+          "UnsupportedMembers": "Add TWDU characters or NPCs to see tactical aggregation."
+        }
       }
     },
     "Faction": {
@@ -224,10 +244,20 @@
       "Party": {
         "Label": "Party (ZU)",
         "Sections": {
-          "Members": "Members"
+          "Members": "Members",
+          "Tactical": "Attributes & Skills"
         },
         "Fields": {
-          "MemberCount": "Members"
+          "MemberCount": "Members",
+          "Mode": "Mode",
+          "SkillSource": "Skill Source"
+        },
+        "SourceOptions": {
+          "Party": "Party"
+        },
+        "Modes": {
+          "Simple": "Simple",
+          "Tactical": "Tactical"
         },
         "Actions": {
           "RemoveMember": "Remove member"

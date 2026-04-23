@@ -37,18 +37,26 @@
 
 .zut-party-header-panel__portrait-slot {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
+  align-self: stretch;
 }
 
 .zut-party-header-panel__meta-row {
-  display: flex;
-  justify-content: flex-start;
+  min-width: 0;
+}
+
+.zut-party-header-panel__meta-grid {
+  display: grid;
+  grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
+  gap: var(--zut-space-2);
+  min-width: 0;
 }
 
 .zut-party-header__portrait {
   width: 96px;
-  height: 96px;
+  height: 100%;
+  min-height: 7.25rem;
   overflow: hidden;
   border: 1px solid var(--zut-border-color);
   border-radius: var(--zut-radius-md);
@@ -56,26 +64,73 @@
   box-sizing: border-box;
 }
 
-.zut-party-header__count {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--zut-space-2);
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+.zut-party-meta-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--zut-space-1);
+  min-width: 0;
+  min-height: 4.25rem;
+  padding: var(--zut-space-2) var(--zut-space-3);
   border: 1px solid var(--zut-border-color);
-  border: 0;
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.12);
+  color: rgba(255, 255, 255, 0.92);
 }
 
-.zut-party-header__count-label {
+.zut-party-meta-card__label {
   font-size: 0.875rem;
-  color: var(--zut-muted-text);
+  font-weight: 600;
+  color: inherit;
 }
 
-.zut-party-header__count-value {
+.zut-party-meta-card__value {
   font-size: 1rem;
   font-weight: 700;
+  color: inherit;
+}
+
+.zut-party-meta-card--count {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--zut-space-3);
+}
+
+.zut-party-meta-card--count .zut-party-meta-card__label,
+.zut-party-meta-card--count .zut-party-meta-card__value {
+  display: inline-flex;
+  align-items: center;
+}
+
+.zut-party-meta-card--source {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(10rem, 1fr);
+  align-items: center;
+  gap: var(--zut-space-3);
+}
+
+.zut-party-source-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zut-space-2);
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.zut-party-source-control__checkbox {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.zut-party-source-control__label {
+  min-width: 0;
+}
+
+.zut-party-source-control__select {
+  min-width: 0;
 }
 
 .zut-party-members-panel {
@@ -104,8 +159,8 @@
   align-self: stretch;
   min-width: 0;
   width: 100%;
-  min-height: 20rem;
-  max-height: 20rem;
+  min-height: 19.5rem;
+  max-height: 19.5rem;
   overflow-y: auto;
 }
 
@@ -114,6 +169,134 @@
   width: 100%;
   min-height: 100%;
   align-self: stretch;
+}
+
+.zut-party-tactical-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-2);
+  min-width: 0;
+}
+
+.zut-party-tactical-panel__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--zut-space-2);
+}
+
+.zut-party-header-panel .zut-field__label,
+.zut-party-members-panel__header .zut-field__label,
+.zut-party-tactical-panel__header .zut-field__label {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.zut-party-tactical-system-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--zut-text-color, inherit);
+}
+
+.zut-party-tactical-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--zut-border-color);
+}
+
+.zut-party-tactical-group:last-child {
+  border-right: 0;
+}
+
+.zut-party-tactical-group__header,
+.zut-party-tactical-skill-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--zut-space-2);
+  padding: 0.5rem 0.625rem;
+  border-bottom: 1px solid var(--zut-border-color);
+}
+
+.zut-party-tactical-group__skills {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.zut-party-tactical-skill-row:last-child {
+  border-bottom: 0;
+}
+
+.zut-party-rollable {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.zut-party-rollable:hover:not(:disabled),
+.zut-party-rollable:focus-visible:not(:disabled) {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.zut-party-rollable:disabled {
+  cursor: default;
+  opacity: 0.55;
+  text-decoration: none;
+}
+
+.zut-party-tactical-group__label,
+.zut-party-tactical-skill-row__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+.zut-party-tactical-skill-row__label {
+  font-weight: 600;
+}
+
+.zut-party-tactical-group__value,
+.zut-party-tactical-skill-row__value {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  padding: 0.125rem 0.35rem;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.96);
+  font: inherit;
+  font-weight: 700;
+  text-align: right;
+}
+
+.zut-party-tactical-group__value[readonly],
+.zut-party-tactical-skill-row__value[readonly] {
+  cursor: default;
+}
+
+.zut-party-tactical-group__header {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.zut-party-tactical-group__label {
+  font-size: 0.98rem;
+  text-transform: uppercase;
 }
 
 @media (max-width: 640px) {
@@ -126,7 +309,35 @@
     justify-content: flex-start;
   }
 
-  .zut-party-header__count {
-    flex-wrap: wrap;
+  .zut-party-header-panel__meta-grid,
+  .zut-party-meta-card--source {
+    grid-template-columns: 1fr;
+  }
+
+  .zut-party-tactical-system-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zut-party-tactical-group {
+    border-right: 0;
+    border-bottom: 1px solid var(--zut-border-color);
+  }
+
+  .zut-party-tactical-group:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 641px) {
+  .zut-party-tactical-system-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zut-party-tactical-group:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .zut-party-tactical-group:nth-last-child(-n + 2) {
+    border-bottom: 0;
   }
 }

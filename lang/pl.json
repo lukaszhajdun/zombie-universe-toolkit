@@ -97,6 +97,26 @@
           "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
           "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
         }
+      },
+      "Tactical": {
+        "Sections": {
+          "Attributes": "Najlepsze atrybuty",
+          "Skills": "Najlepsze skille"
+        },
+        "Summary": "Obsługiwani członkowie TWDU",
+        "Notifications": {
+          "NoValue": "Ten test drużyny nie ma jeszcze zagregowanej wartości."
+        },
+        "Breakdowns": {
+          "Attribute": "{label} {value}",
+          "PcSkill": "{attributeLabel} {attributeValue} + {skillLabel} {skillValue}",
+          "NpcSkill": "Skill NPC {value}"
+        },
+        "Empty": {
+          "Attribute": "Żaden obsługiwany bohater nie dostarcza jeszcze tego atrybutu.",
+          "Skill": "Żaden obsługiwany członek nie dostarcza jeszcze tego skilla.",
+          "UnsupportedMembers": "Dodaj postacie lub NPC z TWDU, aby zobaczyć agregację taktyczną."
+        }
       }
     },
     "Faction": {
@@ -224,10 +244,20 @@
       "Party": {
         "Label": "Drużyna (ZU)",
         "Sections": {
-          "Members": "Członkowie"
+          "Members": "Członkowie",
+          "Tactical": "Atrybuty i skille"
         },
         "Fields": {
-          "MemberCount": "Członkowie"
+          "MemberCount": "Członkowie",
+          "Mode": "Tryb",
+          "SkillSource": "Skill Source"
+        },
+        "SourceOptions": {
+          "Party": "Party"
+        },
+        "Modes": {
+          "Simple": "Prosty",
+          "Tactical": "Taktyczny"
         },
         "Actions": {
           "RemoveMember": "Usuń członka"

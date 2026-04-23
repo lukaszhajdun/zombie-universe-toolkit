@@ -1,3 +1,6 @@
-2026/04/23-21:13:10.551 8948 Recovering log #55
-2026/04/23-21:13:10.554 8948 Delete type=0 #55
-2026/04/23-21:13:10.554 8948 Delete type=3 #54
+2026/04/23-22:24:05.497 24dc Log #59: 0 ops saved to Table #60 OK
+2026/04/23-22:24:05.497 24dc Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/000059.log: OK
+2026/04/23-22:24:05.497 24dc Table #5: 2 entries OK
+2026/04/23-22:24:05.497 24dc Table #53: 2 entries OK
+2026/04/23-22:24:05.498 24dc Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/MANIFEST-000058: OK
+2026/04/23-22:24:05.500 24dc **** Repaired leveldb ..\Data\modules\zombie-universe-toolkit\packs\macros; recovered 2 files; 1471 bytes. Some data may have been lost. ****

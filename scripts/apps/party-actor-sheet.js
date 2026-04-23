@@ -7,9 +7,11 @@ import { getClosestDropZoneId } from "../services/dragdrop.service.js";
 import { openActorReference } from "../services/actor-ref.service.js";
 import {
   addPartyMember,
-  preparePartyMembers,
+  getPartyRollData,
+  preparePartyContext,
   removePartyMemberByIndex
 } from "../services/party-actor.service.js";
+import { openPartyRollDialog } from "../services/party-roll.service.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 
 const PARTY_TYPE = getQualifiedActorType(ACTOR_TYPES.PARTY);
@@ -26,8 +28,8 @@ export class PartyActorSheet extends BaseModuleActorSheet {
     options.position = foundry.utils.mergeObject(
       options.position ?? {},
       {
-        width: 760,
-        height: 700
+        width: 840,
+        height: 920
       },
       { inplace: false }
     );
@@ -59,14 +61,12 @@ export class PartyActorSheet extends BaseModuleActorSheet {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    const members = await preparePartyMembers(this.actor);
+    const partyContext = await preparePartyContext(this.actor);
 
     return foundry.utils.mergeObject(
       context,
       {
-        members,
-        membersCount: members.length,
-        hasMembers: members.length > 0
+        ...partyContext
       },
       { inplace: false }
     );
@@ -90,6 +90,12 @@ export class PartyActorSheet extends BaseModuleActorSheet {
         selector: "[data-member-remove]",
         handler: (event, element) => {
           void this._onMemberRemove(event, element);
+        }
+      },
+      {
+        selector: "[data-party-roll]",
+        handler: (event, element) => {
+          void this._onPartyRoll(event, element);
         }
       }
     ];
@@ -149,6 +155,22 @@ export class PartyActorSheet extends BaseModuleActorSheet {
     if (!Number.isInteger(index)) return;
 
     await removePartyMemberByIndex(this.actor, index);
+  }
+
+  async _onPartyRoll(event, button) {
+    event.preventDefault();
+
+    const kind = String(button.dataset.rollKind ?? "").trim();
+    const key = String(button.dataset.rollKey ?? "").trim();
+    if (!kind || !key) return;
+
+    const rollData = await getPartyRollData(this.actor, kind, key);
+    if (!rollData) {
+      ui.notifications?.warn(game.i18n.localize("ZUT.Party.Tactical.Notifications.NoValue"));
+      return;
+    }
+
+    openPartyRollDialog(rollData);
   }
 }
 
