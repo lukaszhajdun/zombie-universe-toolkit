@@ -114,12 +114,13 @@ export function createActorReferencePresentation(reference, resolvedActor, fallb
   const actorType = resolvedActor?.type ?? normalizedReference.type;
   const resolvedUuid = typeof resolvedActor?.uuid === "string" ? resolvedActor.uuid : "";
   const resolvedId = typeof resolvedActor?.id === "string" ? resolvedActor.id : "";
+  const fallbackName = game.i18n.localize(fallbackNameKey);
 
   return {
     uuid: normalizedReference.uuid || resolvedUuid,
     id: normalizedReference.id || resolvedId,
-    name: resolvedActor?.name ?? normalizedReference.name ?? game.i18n.localize(fallbackNameKey),
-    img: resolvedActor?.img ?? normalizedReference.img ?? "icons/svg/mystery-man.svg",
+    name: resolvedActor?.name?.trim() || normalizedReference.name.trim() || fallbackName,
+    img: resolvedActor?.img?.trim() || normalizedReference.img.trim() || "icons/svg/mystery-man.svg",
     type: actorType,
     typeLabel: getActorTypeLabel(actorType),
     exists: Boolean(resolvedActor)

@@ -16,6 +16,13 @@ export function hasActorMember(actor, candidateActor) {
   return members.some(member => isSameActorReference(member, candidateReference));
 }
 
+function isSameActorDocument(left, right) {
+  if (!left || !right) return false;
+  if (left.uuid && right.uuid) return left.uuid === right.uuid;
+  if (left.id && right.id) return left.id === right.id;
+  return false;
+}
+
 export async function addActorMember(actor, candidateActor) {
   if (!actor || actor.documentName !== "Actor") {
     return { status: "invalid" };
@@ -25,7 +32,7 @@ export async function addActorMember(actor, candidateActor) {
     return { status: "invalid" };
   }
 
-  if (actor.id === candidateActor.id) {
+  if (isSameActorDocument(actor, candidateActor)) {
     return { status: "self" };
   }
 

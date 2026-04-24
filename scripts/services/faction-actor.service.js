@@ -21,6 +21,13 @@ function hasActorReference(list, actorDocument) {
   return list.some(reference => isSameActorReference(reference, candidateReference));
 }
 
+function isSameActorDocument(left, right) {
+  if (!left || !right) return false;
+  if (left.uuid && right.uuid) return left.uuid === right.uuid;
+  if (left.id && right.id) return left.id === right.id;
+  return false;
+}
+
 export async function prepareFactionKeyFigures(actor) {
   const keyFigures = getFactionKeyFiguresArray(actor);
 
@@ -64,7 +71,7 @@ export function prepareFactionChallenges(actor) {
 export async function addFactionKeyFigure(actor, candidateActor) {
   if (!actor || actor.documentName !== "Actor") return { status: "invalid" };
   if (!candidateActor || candidateActor.documentName !== "Actor") return { status: "invalid" };
-  if (actor.id === candidateActor.id) return { status: "self" };
+  if (isSameActorDocument(actor, candidateActor)) return { status: "self" };
 
   const current = getFactionKeyFiguresArray(actor);
   const currentReferences = current.map(entry => entry?.actor ?? null);
@@ -89,7 +96,7 @@ export async function addFactionKeyFigure(actor, candidateActor) {
 async function addFactionActorReference(actor, candidateActor, systemPath) {
   if (!actor || actor.documentName !== "Actor") return { status: "invalid" };
   if (!candidateActor || candidateActor.documentName !== "Actor") return { status: "invalid" };
-  if (actor.id === candidateActor.id) return { status: "self" };
+  if (isSameActorDocument(actor, candidateActor)) return { status: "self" };
 
   const current = getFactionActorReferenceArray(actor, systemPath);
 

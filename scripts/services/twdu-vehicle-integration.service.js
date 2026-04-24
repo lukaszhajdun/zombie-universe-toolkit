@@ -63,10 +63,18 @@ function hasActiveGmAuthority() {
 
 function emitGmAuthorityRequest(action, payload = {}) {
   if (!hasActiveGmAuthority()) {
+    logger.debug("GM authority request skipped because no active GM is available.", {
+      action,
+      payload
+    });
     return { status: "missingGmAuthority" };
   }
 
   if (!game.socket) {
+    logger.debug("GM authority request skipped because game.socket is unavailable.", {
+      action,
+      payload
+    });
     return { status: "missingSocket" };
   }
 
@@ -74,6 +82,11 @@ function emitGmAuthorityRequest(action, payload = {}) {
     action,
     payload,
     senderUserId: game.user?.id ?? ""
+  });
+
+  logger.debug("GM authority request queued.", {
+    action,
+    payload
   });
 
   return { status: "queuedForGmAuthority" };
@@ -927,6 +940,11 @@ async function handleGmAuthorityRequest(message = {}) {
 
   const action = String(message.action ?? "");
   const payload = message.payload && typeof message.payload === "object" ? message.payload : {};
+  logger.debug("GM authority request received.", {
+    action,
+    payload,
+    senderUserId: message.senderUserId ?? ""
+  });
 
   try {
     switch (action) {
