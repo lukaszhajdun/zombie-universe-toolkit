@@ -20,7 +20,7 @@ function isActorBroken(actor) {
   return health < 1;
 }
 
-export function openPartyRollDialog(rollData) {
+export function openTwduRollDialog(rollData) {
   const actor = rollData?.actor;
   if (!actor) return false;
 

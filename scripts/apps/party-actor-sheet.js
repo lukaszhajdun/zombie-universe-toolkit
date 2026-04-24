@@ -11,7 +11,7 @@ import {
   preparePartyContext,
   removePartyMemberByIndex
 } from "../services/party-actor.service.js";
-import { openPartyRollDialog } from "../services/party-roll.service.js";
+import { openTwduRollDialog } from "../services/twdu-roll-dialog.service.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 
 const PARTY_TYPE = getQualifiedActorType(ACTOR_TYPES.PARTY);
@@ -170,7 +170,7 @@ export class PartyActorSheet extends BaseModuleActorSheet {
       return;
     }
 
-    openPartyRollDialog(rollData);
+    openTwduRollDialog(rollData);
   }
 }
 

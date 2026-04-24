@@ -10,23 +10,15 @@ import {
 } from "../services/actor-ref.service.js";
 import {
   addGroupMember,
+  getGroupRollData,
+  prepareGroupContext,
   removeGroupMemberByIndex
 } from "../services/group-actor.service.js";
-import {
-  getPartyRollData,
-  preparePartyContext
-} from "../services/party-actor.service.js";
-import { openPartyRollDialog } from "../services/party-roll.service.js";
+import { openTwduRollDialog } from "../services/twdu-roll-dialog.service.js";
 import { getQualifiedActorType } from "../model/register-models.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 
 const GROUP_TYPE = getQualifiedActorType(ACTOR_TYPES.GROUP);
-const GROUP_ROLL_CONTEXT = Object.freeze({
-  aggregateSourceValue: "group",
-  aggregateSourceLabelKey: "ZUT.Sheets.Group.SourceOptions.Group",
-  aggregateSourceFallback: "Group",
-  memberUnknownNameKey: "ZUT.Group.Members.UnknownName"
-});
 
 export class GroupActorSheet extends BaseModuleActorSheet {
   static get DEFAULT_OPTIONS() {
@@ -73,7 +65,7 @@ export class GroupActorSheet extends BaseModuleActorSheet {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    const groupContext = await preparePartyContext(this.actor, GROUP_ROLL_CONTEXT);
+    const groupContext = await prepareGroupContext(this.actor);
 
     return foundry.utils.mergeObject(
       context,
@@ -176,13 +168,13 @@ export class GroupActorSheet extends BaseModuleActorSheet {
     const key = String(button.dataset.rollKey ?? "").trim();
     if (!kind || !key) return;
 
-    const rollData = await getPartyRollData(this.actor, kind, key, GROUP_ROLL_CONTEXT);
+    const rollData = await getGroupRollData(this.actor, kind, key);
     if (!rollData) {
       ui.notifications?.warn(game.i18n.localize("ZUT.Group.Tactical.Notifications.NoValue"));
       return;
     }
 
-    openPartyRollDialog(rollData);
+    openTwduRollDialog(rollData);
   }
 }
 

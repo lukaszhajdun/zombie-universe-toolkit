@@ -1,71 +1,42 @@
 import {
-  createActorReferencePresentation,
-  createActorReference,
-  isSameActorReference,
-  resolveActorReference
-} from "./actor-ref.service.js";
+  addActorMember,
+  hasActorMember,
+  removeActorMemberByIndex
+} from "./actor-members.service.js";
+import {
+  getTwduGroupRollData,
+  prepareTwduGroupRollContext,
+  prepareTwduGroupRollMembers
+} from "./twdu-group-rolls.service.js";
 
-function getGroupMembersArray(actor) {
-  return Array.isArray(actor?.system?.members) ? [...actor.system.members] : [];
-}
+const GROUP_SOURCE_VALUE = "group";
+const GROUP_ROLL_CONTEXT = Object.freeze({
+  aggregateSourceValue: GROUP_SOURCE_VALUE,
+  aggregateSourceLabelKey: "ZUT.Sheets.Group.SourceOptions.Group",
+  aggregateSourceFallback: "Group",
+  memberUnknownNameKey: "ZUT.Group.Members.UnknownName"
+});
 
 export async function prepareGroupMembers(actor) {
-  const members = getGroupMembersArray(actor);
+  return prepareTwduGroupRollMembers(actor, GROUP_ROLL_CONTEXT);
+}
 
-  return Promise.all(
-    members.map(async (member, index) => {
-      const resolved = await resolveActorReference(member);
+export async function prepareGroupContext(actor) {
+  return prepareTwduGroupRollContext(actor, GROUP_ROLL_CONTEXT);
+}
 
-      return {
-        index,
-        ...createActorReferencePresentation(member, resolved, "ZUT.Group.Members.UnknownName")
-      };
-    })
-  );
+export async function getGroupRollData(actor, kind, key) {
+  return getTwduGroupRollData(actor, kind, key, GROUP_ROLL_CONTEXT);
 }
 
 export function hasGroupMember(actor, candidateActor) {
-  if (!candidateActor || candidateActor.documentName !== "Actor") return false;
-
-  const candidateReference = createActorReference(candidateActor);
-  const members = getGroupMembersArray(actor);
-
-  return members.some(member => isSameActorReference(member, candidateReference));
+  return hasActorMember(actor, candidateActor);
 }
 
 export async function addGroupMember(actor, candidateActor) {
-  if (!actor || actor.documentName !== "Actor") {
-    return { status: "invalid" };
-  }
-
-  if (!candidateActor || candidateActor.documentName !== "Actor") {
-    return { status: "invalid" };
-  }
-
-  if (actor.id === candidateActor.id) {
-    return { status: "self" };
-  }
-
-  if (hasGroupMember(actor, candidateActor)) {
-    return { status: "duplicate" };
-  }
-
-  const members = getGroupMembersArray(actor);
-  members.push(createActorReference(candidateActor));
-
-  await actor.update({ "system.members": members });
-
-  return {
-    status: "added",
-    member: candidateActor
-  };
+  return addActorMember(actor, candidateActor);
 }
 
 export async function removeGroupMemberByIndex(actor, memberIndex) {
-  const members = getGroupMembersArray(actor);
-  if (!Number.isInteger(memberIndex)) return;
-  if (memberIndex < 0 || memberIndex >= members.length) return;
-
-  members.splice(memberIndex, 1);
-  await actor.update({ "system.members": members });
+  return removeActorMemberByIndex(actor, memberIndex);
 }
