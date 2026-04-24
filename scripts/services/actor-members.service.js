@@ -1,4 +1,8 @@
 import {
+  ACTOR_TYPES,
+  toModuleActorKey
+} from "../core/constants.js";
+import {
   createActorReference,
   isSameActorReference
 } from "./actor-ref.service.js";
@@ -21,6 +25,13 @@ function isSameActorDocument(left, right) {
   if (left.uuid && right.uuid) return left.uuid === right.uuid;
   if (left.id && right.id) return left.id === right.id;
   return false;
+}
+
+function isGroupOrPartyActor(actor) {
+  if (!actor || actor.documentName !== "Actor") return false;
+
+  const actorTypeKey = toModuleActorKey(actor.type) ?? actor.type;
+  return actorTypeKey === ACTOR_TYPES.GROUP || actorTypeKey === ACTOR_TYPES.PARTY;
 }
 
 export async function addActorMember(actor, candidateActor) {
@@ -58,4 +69,48 @@ export async function removeActorMemberByIndex(actor, memberIndex) {
 
   members.splice(memberIndex, 1);
   await actor.update({ "system.members": members });
+}
+
+export async function cleanupActorMemberReferencesForDeletedActor(deletedActor) {
+  if (!deletedActor || deletedActor.documentName !== "Actor") {
+    return {
+      status: "invalidDeletedActor",
+      updatedActors: 0,
+      removedMembers: 0
+    };
+  }
+
+  return cleanupActorMemberReferencesForDeletedActorReference(
+    createActorReference(deletedActor),
+    deletedActor.uuid ?? ""
+  );
+}
+
+export async function cleanupActorMemberReferencesForDeletedActorReference(deletedReference, deletedActorUuid = "") {
+  let updatedActors = 0;
+  let removedMembers = 0;
+
+  for (const actor of game.actors ?? []) {
+    if (!isGroupOrPartyActor(actor)) continue;
+    if (deletedActorUuid && actor.uuid === deletedActorUuid) continue;
+
+    const members = getActorMembersArray(actor);
+    if (!members.length) continue;
+
+    const filteredMembers = members.filter(
+      memberReference => !isSameActorReference(memberReference, deletedReference)
+    );
+
+    if (filteredMembers.length === members.length) continue;
+
+    await actor.update({ "system.members": filteredMembers });
+    updatedActors += 1;
+    removedMembers += members.length - filteredMembers.length;
+  }
+
+  return {
+    status: "cleaned",
+    updatedActors,
+    removedMembers
+  };
 }

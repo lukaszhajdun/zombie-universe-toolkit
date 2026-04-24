@@ -1,5 +1,9 @@
 import { logger } from "../core/logger.js";
 import {
+  cleanupActorMemberReferencesForDeletedActor
+} from "../services/actor-members.service.js";
+import {
+  isTwduGmAuthority,
   isTwduSystemActive,
   requestCleanupTwduLinksForDeletedVehicle,
   requestCleanupVehicleRoleReferencesForDeletedActor
@@ -10,6 +14,23 @@ import {
 
 export function registerVehicleCleanupHooks() {
   Hooks.on("deleteActor", actor => {
+    if (!isTwduGmAuthority()) return;
+
+    void cleanupActorMemberReferencesForDeletedActor(actor)
+      .then(result => {
+        if (result.status !== "cleaned") return;
+        if (!result.updatedActors && !result.removedMembers) return;
+
+        logger.debug("Cleaned group and party member references after actor deletion.", {
+          deletedActorUuid: actor?.uuid ?? "",
+          deletedActorName: actor?.name ?? "",
+          result
+        });
+      })
+      .catch(error => {
+        logger.error("Failed to clean group and party member references after actor deletion.", error);
+      });
+
     void requestCleanupVehicleRoleReferencesForDeletedActor(actor)
       .then(result => {
         if (result.status !== "cleaned") return;
