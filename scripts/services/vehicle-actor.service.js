@@ -398,7 +398,23 @@ export async function cleanupVehicleRoleReferencesForDeletedActor(deletedActor) 
     };
   }
 
-  const deletedReference = createActorReference(deletedActor);
+  return cleanupVehicleRoleReferencesForDeletedActorReference(
+    createActorReference(deletedActor),
+    deletedActor.uuid
+  );
+}
+
+export async function cleanupVehicleRoleReferencesForDeletedActorReference(deletedReference, deletedActorUuid = "") {
+  if (!hasStoredActorReference(deletedReference)) {
+    return {
+      status: "invalidDeletedActor",
+      updatedVehicles: 0,
+      clearedOwner: 0,
+      clearedDriver: 0,
+      removedPassengers: 0
+    };
+  }
+
   let updatedVehicles = 0;
   let clearedOwner = 0;
   let clearedDriver = 0;
@@ -406,7 +422,7 @@ export async function cleanupVehicleRoleReferencesForDeletedActor(deletedActor) 
 
   for (const actor of game.actors ?? []) {
     if (!isVehicleActorDocument(actor)) continue;
-    if (actor.uuid === deletedActor.uuid) continue;
+    if (deletedActorUuid && actor.uuid === deletedActorUuid) continue;
 
     const updateData = {};
 

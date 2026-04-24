@@ -6,6 +6,7 @@ import {
 import { logger } from "../core/logger.js";
 import { resolveActorReference } from "./actor-ref.service.js";
 import {
+  cleanupVehicleRoleReferencesForDeletedActorReference,
   clearVehicleDriver,
   getVehicleDriverReference
 } from "./vehicle-actor.service.js";
@@ -14,9 +15,18 @@ const SNAPSHOT_FLAG_KEY = "twduVehicleItemSnapshot";
 const DRIVER_CLONE_FLAG_KEY = "twduVehicleClone";
 const SOURCE_ITEM_FLAG_KEY = "twduVehicleSourceItem";
 const SUPPRESS_ITEM_HOOKS_OPTION = `${MODULE_ID}SuppressTwduVehicleItemHooks`;
+const SOCKET_NAME = `module.${MODULE_ID}`;
+const SOCKET_ACTIONS = Object.freeze({
+  CLEANUP_DELETED_ACTOR_REFS: "cleanupDeletedActorRefs",
+  CLEANUP_DELETED_VEHICLE_LINKS: "cleanupDeletedVehicleLinks",
+  CLEAR_DRIVER_FOR_DELETED_CLONE: "clearDriverForDeletedClone",
+  SYNC_DRIVER_VEHICLE_CLONE: "syncDriverVehicleClone",
+  SYNC_LINKED_VEHICLE_ITEM: "syncLinkedVehicleItem"
+});
 const SUPPRESSED_LINKED_ITEM_KEYS = new Set();
 const VEHICLE_SYNC_IN_FLIGHT = new Map();
 const VEHICLE_SYNC_PENDING = new Map();
+let gmAuthoritySocketRegistered = false;
 
 function isActorDocument(actor) {
   return actor?.documentName === "Actor";
@@ -27,6 +37,54 @@ function isModuleVehicleActor(actor) {
 
   return actor.type === ACTOR_TYPES.VEHICLE
     || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE);
+}
+
+function getActiveGmUsers() {
+  const users = Array.isArray(game.users?.contents)
+    ? game.users.contents
+    : typeof game.users?.filter === "function"
+      ? game.users.filter(() => true)
+      : Array.from(game.users ?? []);
+
+  return users
+    .filter(user => user?.active === true && user?.isGM === true)
+    .sort((left, right) => String(left.id ?? "").localeCompare(String(right.id ?? "")));
+}
+
+export function isTwduGmAuthority() {
+  if (game.user?.isGM !== true) return false;
+  const [authority] = getActiveGmUsers();
+  return authority?.id === game.user.id;
+}
+
+function hasActiveGmAuthority() {
+  return getActiveGmUsers().length > 0;
+}
+
+function emitGmAuthorityRequest(action, payload = {}) {
+  if (!hasActiveGmAuthority()) {
+    return { status: "missingGmAuthority" };
+  }
+
+  if (!game.socket) {
+    return { status: "missingSocket" };
+  }
+
+  game.socket.emit(SOCKET_NAME, {
+    action,
+    payload,
+    senderUserId: game.user?.id ?? ""
+  });
+
+  return { status: "queuedForGmAuthority" };
+}
+
+async function runAsGmAuthority(action, payload, operation) {
+  if (isTwduGmAuthority()) {
+    return operation();
+  }
+
+  return emitGmAuthorityRequest(action, payload);
 }
 
 function parseIntegerValue(value) {
@@ -417,6 +475,22 @@ export function getTwduVehicleItemSnapshot(actor) {
   return getVehicleSnapshot(actor);
 }
 
+export async function requestSyncModuleVehicleFromTwduLinkedItem(item) {
+  if (!isTwduSystemActive()) {
+    return { status: "inactiveSystem" };
+  }
+
+  if (!isTwduVehicleItem(item)) {
+    return { status: "invalidItem" };
+  }
+
+  return runAsGmAuthority(
+    SOCKET_ACTIONS.SYNC_LINKED_VEHICLE_ITEM,
+    { itemUuid: item.uuid ?? "" },
+    () => syncModuleVehicleFromTwduLinkedItem(item)
+  );
+}
+
 export async function syncModuleVehicleFromTwduLinkedItem(item) {
   if (!isTwduSystemActive()) {
     return { status: "inactiveSystem" };
@@ -471,6 +545,35 @@ export async function syncModuleVehicleFromTwduLinkedItem(item) {
   };
 }
 
+function createDeletedClonePayload(item) {
+  const metadata = getDriverCloneMetadata(item);
+  const driverActor = getEmbeddedItemParentActor(item);
+
+  if (!metadata?.vehicleActorUuid || !driverActor?.uuid) return null;
+
+  return {
+    vehicleActorUuid: metadata.vehicleActorUuid,
+    driverActorUuid: driverActor.uuid
+  };
+}
+
+export async function requestClearVehicleDriverForDeletedTwduClone(item) {
+  if (!isTwduSystemActive()) {
+    return { status: "inactiveSystem" };
+  }
+
+  const payload = createDeletedClonePayload(item);
+  if (!payload) {
+    return { status: "notDriverClone" };
+  }
+
+  return runAsGmAuthority(
+    SOCKET_ACTIONS.CLEAR_DRIVER_FOR_DELETED_CLONE,
+    payload,
+    () => clearVehicleDriverForDeletedTwduClone(item)
+  );
+}
+
 export async function clearVehicleDriverForDeletedTwduClone(item) {
   if (!isTwduSystemActive()) {
     return { status: "inactiveSystem" };
@@ -510,6 +613,42 @@ export async function clearVehicleDriverForDeletedTwduClone(item) {
   };
 }
 
+export async function clearVehicleDriverForDeletedTwduClonePayload(payload = {}) {
+  if (!isTwduSystemActive()) {
+    return { status: "inactiveSystem" };
+  }
+
+  const vehicleActorUuid = String(payload.vehicleActorUuid ?? "");
+  const driverActorUuid = String(payload.driverActorUuid ?? "");
+
+  if (!vehicleActorUuid || !driverActorUuid) {
+    return { status: "invalidPayload" };
+  }
+
+  const vehicleActor = await fromUuid(vehicleActorUuid);
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return { status: "missingVehicleActor" };
+  }
+
+  const currentDriverReference = getVehicleDriverReference(vehicleActor);
+  const currentDriverUuid = currentDriverReference?.uuid ?? "";
+
+  if (!currentDriverUuid || currentDriverUuid !== driverActorUuid) {
+    return {
+      status: "driverAlreadyDifferent",
+      vehicleActor
+    };
+  }
+
+  await clearVehicleDriver(vehicleActor);
+
+  return {
+    status: "clearedVehicleDriver",
+    vehicleActor,
+    driverActorUuid
+  };
+}
+
 export async function importTwduVehicleItemToModuleVehicle(vehicleActor, item) {
   if (!isModuleVehicleActor(vehicleActor)) {
     return { status: "invalidVehicleActor" };
@@ -531,7 +670,7 @@ export async function importTwduVehicleItemToModuleVehicle(vehicleActor, item) {
   await vehicleActor.setFlag(MODULE_ID, SNAPSHOT_FLAG_KEY, snapshot);
   await vehicleActor.update(updateData);
 
-  const syncResult = await syncTwduDriverVehicleClone(vehicleActor);
+  const syncResult = await requestTwduDriverVehicleCloneSync(vehicleActor);
 
   logger.debug("Imported TWDU vehicle item into module vehicle actor.", {
     vehicleActorUuid: vehicleActor.uuid,
@@ -664,9 +803,87 @@ export async function cleanupTwduLinksForDeletedVehicle(vehicleActor) {
   };
 }
 
+export async function cleanupTwduLinksForDeletedVehicleUuid(vehicleActorUuid, options = {}) {
+  const uuid = String(vehicleActorUuid ?? "");
+
+  if (!uuid) {
+    return {
+      status: "invalidVehicleActor",
+      removedClones: 0
+    };
+  }
+
+  let removedClones = 0;
+
+  for (const actor of getActorsWithVehicleCloneItemsFromIndex(options.cloneHolderIndex, uuid)) {
+    try {
+      removedClones += await removeDriverCloneItemsForVehicle(actor, uuid);
+    } catch (_error) {
+      // Ignore per-actor cleanup errors to avoid blocking actor deletion flow.
+    }
+  }
+
+  return {
+    status: "cleaned",
+    removedClones,
+    vehicleActorUuid: uuid
+  };
+}
+
+export async function requestCleanupTwduLinksForDeletedVehicle(vehicleActor, options = {}) {
+  if (!isModuleVehicleActor(vehicleActor)) {
+    return {
+      status: "invalidVehicleActor",
+      removedClones: 0
+    };
+  }
+
+  return runAsGmAuthority(
+    SOCKET_ACTIONS.CLEANUP_DELETED_VEHICLE_LINKS,
+    { vehicleActorUuid: vehicleActor.uuid ?? "" },
+    () => cleanupTwduLinksForDeletedVehicle(vehicleActor, options)
+  );
+}
+
+export async function requestCleanupVehicleRoleReferencesForDeletedActor(deletedActor) {
+  if (!isActorDocument(deletedActor)) {
+    return {
+      status: "invalidDeletedActor",
+      updatedVehicles: 0,
+      clearedOwner: 0,
+      clearedDriver: 0,
+      removedPassengers: 0
+    };
+  }
+
+  const deletedReference = {
+    uuid: deletedActor.uuid ?? "",
+    id: deletedActor.id ?? "",
+    name: deletedActor.name ?? "",
+    img: deletedActor.img ?? "",
+    type: deletedActor.type ?? ""
+  };
+
+  return runAsGmAuthority(
+    SOCKET_ACTIONS.CLEANUP_DELETED_ACTOR_REFS,
+    {
+      deletedReference,
+      deletedActorUuid: deletedActor.uuid ?? ""
+    },
+    () => cleanupVehicleRoleReferencesForDeletedActorReference(deletedReference, deletedActor.uuid ?? "")
+  );
+}
+
 export async function requestTwduDriverVehicleCloneSync(vehicleActor, options = {}) {
   if (!isModuleVehicleActor(vehicleActor)) {
     return { status: "invalidVehicleActor" };
+  }
+
+  if (!isTwduGmAuthority()) {
+    return emitGmAuthorityRequest(
+      SOCKET_ACTIONS.SYNC_DRIVER_VEHICLE_CLONE,
+      { vehicleActorUuid: vehicleActor.uuid ?? "" }
+    );
   }
 
   const actorUuid = vehicleActor.uuid;
@@ -703,4 +920,54 @@ export async function requestTwduDriverVehicleCloneSync(vehicleActor, options = 
   } finally {
     VEHICLE_SYNC_IN_FLIGHT.delete(actorUuid);
   }
+}
+
+async function handleGmAuthorityRequest(message = {}) {
+  if (!isTwduGmAuthority()) return null;
+
+  const action = String(message.action ?? "");
+  const payload = message.payload && typeof message.payload === "object" ? message.payload : {};
+
+  try {
+    switch (action) {
+      case SOCKET_ACTIONS.CLEANUP_DELETED_ACTOR_REFS:
+        return cleanupVehicleRoleReferencesForDeletedActorReference(
+          payload.deletedReference,
+          String(payload.deletedActorUuid ?? "")
+        );
+
+      case SOCKET_ACTIONS.CLEANUP_DELETED_VEHICLE_LINKS:
+        return cleanupTwduLinksForDeletedVehicleUuid(payload.vehicleActorUuid);
+
+      case SOCKET_ACTIONS.CLEAR_DRIVER_FOR_DELETED_CLONE:
+        return clearVehicleDriverForDeletedTwduClonePayload(payload);
+
+      case SOCKET_ACTIONS.SYNC_DRIVER_VEHICLE_CLONE: {
+        const vehicleActor = await fromUuid(String(payload.vehicleActorUuid ?? ""));
+        return requestTwduDriverVehicleCloneSync(vehicleActor);
+      }
+
+      case SOCKET_ACTIONS.SYNC_LINKED_VEHICLE_ITEM: {
+        const item = await fromUuid(String(payload.itemUuid ?? ""));
+        return syncModuleVehicleFromTwduLinkedItem(item);
+      }
+
+      default:
+        return { status: "unknownGmAuthorityAction", action };
+    }
+  } catch (error) {
+    logger.error("Failed to handle GM authority request.", { action, payload, error });
+    return { status: "failed", action };
+  }
+}
+
+export function registerTwduGmAuthoritySocket() {
+  if (gmAuthoritySocketRegistered) return;
+  if (!game.socket) return;
+
+  game.socket.on(SOCKET_NAME, message => {
+    void handleGmAuthorityRequest(message);
+  });
+
+  gmAuthoritySocketRegistered = true;
 }

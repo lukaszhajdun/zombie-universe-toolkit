@@ -1,16 +1,16 @@
 import { logger } from "../core/logger.js";
 import {
-  cleanupTwduLinksForDeletedVehicle,
-  isTwduSystemActive
+  isTwduSystemActive,
+  requestCleanupTwduLinksForDeletedVehicle,
+  requestCleanupVehicleRoleReferencesForDeletedActor
 } from "../services/twdu-vehicle-integration.service.js";
 import {
-  cleanupVehicleRoleReferencesForDeletedActor,
   isVehicleActorDocument
 } from "../services/vehicle-actor.service.js";
 
 export function registerVehicleCleanupHooks() {
   Hooks.on("deleteActor", actor => {
-    void cleanupVehicleRoleReferencesForDeletedActor(actor)
+    void requestCleanupVehicleRoleReferencesForDeletedActor(actor)
       .then(result => {
         if (result.status !== "cleaned") return;
         if (!result.updatedVehicles && !result.clearedOwner && !result.clearedDriver && !result.removedPassengers) return;
@@ -28,7 +28,7 @@ export function registerVehicleCleanupHooks() {
     if (!isTwduSystemActive()) return;
     if (!isVehicleActorDocument(actor)) return;
 
-    void cleanupTwduLinksForDeletedVehicle(actor)
+    void requestCleanupTwduLinksForDeletedVehicle(actor)
       .then(result => {
         if (result.status !== "cleaned") return;
         if (!result.removedClones) return;

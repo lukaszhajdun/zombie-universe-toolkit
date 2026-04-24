@@ -20,7 +20,9 @@ import {
 } from "./services/storage-transfer.service.js";
 import {
   buildTwduVehicleCloneHolderIndex,
+  isTwduGmAuthority,
   isTwduSystemActive,
+  registerTwduGmAuthoritySocket,
   requestTwduDriverVehicleCloneSync
 } from "./services/twdu-vehicle-integration.service.js";
 import { canViewStorage } from "./services/storage.service.js";
@@ -198,13 +200,15 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
   registerApi();
+  registerTwduGmAuthoritySocket();
   logger.debug("Module API registered.");
 });
 
 Hooks.once("ready", () => {
+  registerTwduGmAuthoritySocket();
   document.addEventListener("drop", onGlobalStorageItemDrop, true);
 
-  if (isTwduSystemActive()) {
+  if (isTwduSystemActive() && isTwduGmAuthority()) {
     const vehicleActors = game.actors?.filter(
       actor => actor.type === ACTOR_TYPES.VEHICLE || actor.type === qualifyModuleActorType(ACTOR_TYPES.VEHICLE)
     ) ?? [];

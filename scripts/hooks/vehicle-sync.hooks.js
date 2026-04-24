@@ -5,11 +5,11 @@ import {
 } from "../core/constants.js";
 import { logger } from "../core/logger.js";
 import {
-  clearVehicleDriverForDeletedTwduClone,
   isTwduSystemActive,
+  requestClearVehicleDriverForDeletedTwduClone,
+  requestSyncModuleVehicleFromTwduLinkedItem,
   requestTwduDriverVehicleCloneSync,
-  shouldIgnoreTwduVehicleItemHooks,
-  syncModuleVehicleFromTwduLinkedItem
+  shouldIgnoreTwduVehicleItemHooks
 } from "../services/twdu-vehicle-integration.service.js";
 
 function changedDataHasPath(changedData, path) {
@@ -77,7 +77,7 @@ export function registerVehicleSyncHooks() {
       parentActorUuid: item.parent?.uuid ?? ""
     });
 
-    void syncModuleVehicleFromTwduLinkedItem(item).catch(error => {
+    void requestSyncModuleVehicleFromTwduLinkedItem(item).catch(error => {
       logger.error("Failed to sync module vehicle actor from linked TWDU vehicle item update.", error);
     });
   });
@@ -92,7 +92,7 @@ export function registerVehicleSyncHooks() {
       parentActorUuid: item.parent?.uuid ?? ""
     });
 
-    void clearVehicleDriverForDeletedTwduClone(item).catch(error => {
+    void requestClearVehicleDriverForDeletedTwduClone(item).catch(error => {
       logger.error("Failed to clear module vehicle driver after linked TWDU clone deletion.", error);
     });
   });
