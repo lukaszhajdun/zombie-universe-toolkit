@@ -10,13 +10,23 @@ import {
 } from "../services/actor-ref.service.js";
 import {
   addGroupMember,
-  prepareGroupMembers,
   removeGroupMemberByIndex
 } from "../services/group-actor.service.js";
+import {
+  getPartyRollData,
+  preparePartyContext
+} from "../services/party-actor.service.js";
+import { openPartyRollDialog } from "../services/party-roll.service.js";
 import { getQualifiedActorType } from "../model/register-models.js";
 import { BaseModuleActorSheet } from "./base-module-actor-sheet.js";
 
 const GROUP_TYPE = getQualifiedActorType(ACTOR_TYPES.GROUP);
+const GROUP_ROLL_CONTEXT = Object.freeze({
+  aggregateSourceValue: "group",
+  aggregateSourceLabelKey: "ZUT.Sheets.Group.SourceOptions.Group",
+  aggregateSourceFallback: "Group",
+  memberUnknownNameKey: "ZUT.Group.Members.UnknownName"
+});
 
 export class GroupActorSheet extends BaseModuleActorSheet {
   static get DEFAULT_OPTIONS() {
@@ -29,7 +39,10 @@ export class GroupActorSheet extends BaseModuleActorSheet {
 
     options.position = foundry.utils.mergeObject(
       options.position ?? {},
-      { width: 760 },
+      {
+        width: 820,
+        height: 920
+      },
       { inplace: false }
     );
 
@@ -60,14 +73,12 @@ export class GroupActorSheet extends BaseModuleActorSheet {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    const members = await prepareGroupMembers(this.actor);
+    const groupContext = await preparePartyContext(this.actor, GROUP_ROLL_CONTEXT);
 
     return foundry.utils.mergeObject(
       context,
       {
-        members,
-        membersCount: members.length,
-        hasMembers: members.length > 0
+        ...groupContext
       },
       { inplace: false }
     );
@@ -91,6 +102,12 @@ export class GroupActorSheet extends BaseModuleActorSheet {
         selector: "[data-member-remove]",
         handler: (event, element) => {
           void this._onMemberRemove(event, element);
+        }
+      },
+      {
+        selector: "[data-group-roll]",
+        handler: (event, element) => {
+          void this._onGroupRoll(event, element);
         }
       }
     ];
@@ -150,6 +167,22 @@ export class GroupActorSheet extends BaseModuleActorSheet {
     if (!Number.isInteger(index)) return;
 
     await removeGroupMemberByIndex(this.actor, index);
+  }
+
+  async _onGroupRoll(event, button) {
+    event.preventDefault();
+
+    const kind = String(button.dataset.rollKind ?? "").trim();
+    const key = String(button.dataset.rollKey ?? "").trim();
+    if (!kind || !key) return;
+
+    const rollData = await getPartyRollData(this.actor, kind, key, GROUP_ROLL_CONTEXT);
+    if (!rollData) {
+      ui.notifications?.warn(game.i18n.localize("ZUT.Group.Tactical.Notifications.NoValue"));
+      return;
+    }
+
+    openPartyRollDialog(rollData);
   }
 }
 

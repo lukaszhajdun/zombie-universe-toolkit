@@ -7,6 +7,12 @@ import {
 } from "./actor-ref.service.js";
 
 const PARTY_SOURCE_VALUE = "party";
+const DEFAULT_PARTY_CONTEXT_CONFIG = Object.freeze({
+  aggregateSourceValue: PARTY_SOURCE_VALUE,
+  aggregateSourceLabelKey: "ZUT.Sheets.Party.SourceOptions.Party",
+  aggregateSourceFallback: "Party",
+  memberUnknownNameKey: "ZUT.Party.Members.UnknownName"
+});
 
 const TWDU_ACTOR_TYPES = Object.freeze({
   CHARACTER: "character",
@@ -81,8 +87,19 @@ function getMemberSourceValue(reference, index) {
   return `member:${index}`;
 }
 
-function createUnsupportedPartyMember(index, reference, resolvedActor) {
-  const presentation = createActorReferencePresentation(reference, resolvedActor, "ZUT.Party.Members.UnknownName");
+function resolvePartyContextConfig(config = {}) {
+  return {
+    ...DEFAULT_PARTY_CONTEXT_CONFIG,
+    ...config
+  };
+}
+
+function getAggregateSourceLabel(config) {
+  return localizeOrFallback(config.aggregateSourceLabelKey, config.aggregateSourceFallback);
+}
+
+function createUnsupportedPartyMember(index, reference, resolvedActor, config) {
+  const presentation = createActorReferencePresentation(reference, resolvedActor, config.memberUnknownNameKey);
 
   return {
     index,
@@ -127,12 +144,12 @@ function buildTwduMemberSnapshot(member, resolvedActor) {
   };
 }
 
-function buildPreparedMember(index, reference, resolvedActor) {
-  const presentation = createActorReferencePresentation(reference, resolvedActor, "ZUT.Party.Members.UnknownName");
+function buildPreparedMember(index, reference, resolvedActor, config) {
+  const presentation = createActorReferencePresentation(reference, resolvedActor, config.memberUnknownNameKey);
   const snapshot = buildTwduMemberSnapshot(presentation, resolvedActor);
 
   if (!snapshot) {
-    return createUnsupportedPartyMember(index, reference, resolvedActor);
+    return createUnsupportedPartyMember(index, reference, resolvedActor, config);
   }
 
   return {
@@ -145,23 +162,23 @@ function buildPreparedMember(index, reference, resolvedActor) {
   };
 }
 
-async function loadPreparedMembers(actor) {
+async function loadPreparedMembers(actor, config) {
   const members = getPartyMembersArray(actor);
 
   return Promise.all(
     members.map(async (member, index) => {
       const resolvedActor = await resolveActorReference(member);
-      return buildPreparedMember(index, member, resolvedActor);
+      return buildPreparedMember(index, member, resolvedActor, config);
     })
   );
 }
 
-function buildSkillSourceOptions(preparedMembers, selectedValue) {
+function buildSkillSourceOptions(preparedMembers, selectedValue, config) {
   const options = [
     {
-      value: PARTY_SOURCE_VALUE,
-      label: game.i18n.localize("ZUT.Sheets.Party.SourceOptions.Party"),
-      selected: selectedValue === PARTY_SOURCE_VALUE
+      value: config.aggregateSourceValue,
+      label: getAggregateSourceLabel(config),
+      selected: selectedValue === config.aggregateSourceValue
     }
   ];
 
@@ -176,18 +193,18 @@ function buildSkillSourceOptions(preparedMembers, selectedValue) {
   return options;
 }
 
-function resolveSelectedSkillSource(preparedMembers, actor) {
+function resolveSelectedSkillSource(preparedMembers, actor, config) {
   const settings = getSkillSourceSettings(actor);
-  const requestedValue = settings.target || PARTY_SOURCE_VALUE;
+  const requestedValue = settings.target || config.aggregateSourceValue;
   const selectedValue = (
-    requestedValue === PARTY_SOURCE_VALUE ||
+    requestedValue === config.aggregateSourceValue ||
     preparedMembers.some(member => member.sourceValue === requestedValue)
   )
     ? requestedValue
-    : PARTY_SOURCE_VALUE;
+    : config.aggregateSourceValue;
 
-  const activeValue = settings.enabled ? selectedValue : PARTY_SOURCE_VALUE;
-  const selectedMember = activeValue === PARTY_SOURCE_VALUE
+  const activeValue = settings.enabled ? selectedValue : config.aggregateSourceValue;
+  const selectedMember = activeValue === config.aggregateSourceValue
     ? null
     : preparedMembers.find(member => member.sourceValue === activeValue) ?? null;
 
@@ -196,7 +213,7 @@ function resolveSelectedSkillSource(preparedMembers, actor) {
     selectedValue,
     activeValue,
     selectedMember,
-    options: buildSkillSourceOptions(preparedMembers, selectedValue)
+    options: buildSkillSourceOptions(preparedMembers, selectedValue, config)
   };
 }
 
@@ -363,10 +380,10 @@ function getBestSkillRollCandidate(skillDef, memberSnapshots) {
   return best?.snapshot ?? null;
 }
 
-function buildTacticalView(selection, memberSnapshots) {
-  if (selection.activeValue === PARTY_SOURCE_VALUE) {
+function buildTacticalView(selection, memberSnapshots, config) {
+  if (selection.activeValue === config.aggregateSourceValue) {
     return {
-      sourceLabel: game.i18n.localize("ZUT.Sheets.Party.SourceOptions.Party"),
+      sourceLabel: getAggregateSourceLabel(config),
       hasData: memberSnapshots.length > 0,
       attributeGroups: buildPartyAggregateAttributeGroups(memberSnapshots)
     };
@@ -381,16 +398,18 @@ function buildTacticalView(selection, memberSnapshots) {
   };
 }
 
-async function preparePartyState(actor) {
-  const members = await loadPreparedMembers(actor);
+async function preparePartyState(actor, config = {}) {
+  const contextConfig = resolvePartyContextConfig(config);
+  const members = await loadPreparedMembers(actor, contextConfig);
   const supportedMembers = members.filter(member => member.supportedTwdu === true);
   const memberSnapshots = supportedMembers
     .map(member => member.twduSnapshot)
     .filter(Boolean);
-  const selection = resolveSelectedSkillSource(members, actor);
-  const tactical = buildTacticalView(selection, memberSnapshots);
+  const selection = resolveSelectedSkillSource(members, actor, contextConfig);
+  const tactical = buildTacticalView(selection, memberSnapshots, contextConfig);
 
   return {
+    config: contextConfig,
     members,
     supportedMembers,
     memberSnapshots,
@@ -399,13 +418,13 @@ async function preparePartyState(actor) {
   };
 }
 
-export async function preparePartyMembers(actor) {
-  const state = await preparePartyState(actor);
+export async function preparePartyMembers(actor, config = {}) {
+  const state = await preparePartyState(actor, config);
   return state.members;
 }
 
-export async function preparePartyContext(actor) {
-  const state = await preparePartyState(actor);
+export async function preparePartyContext(actor, config = {}) {
+  const state = await preparePartyState(actor, config);
 
   return {
     members: state.members,
@@ -424,10 +443,10 @@ export async function preparePartyContext(actor) {
   };
 }
 
-export async function getPartyRollData(actor, kind, key) {
-  const state = await preparePartyState(actor);
+export async function getPartyRollData(actor, kind, key, config = {}) {
+  const state = await preparePartyState(actor, config);
 
-  if (state.selection.activeValue === PARTY_SOURCE_VALUE) {
+  if (state.selection.activeValue === state.config.aggregateSourceValue) {
     if (kind === "attribute") {
       const bestSnapshot = getBestAttributeRollCandidate(key, state.memberSnapshots);
       if (!bestSnapshot?.actor) return null;

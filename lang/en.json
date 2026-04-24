@@ -83,6 +83,14 @@
           "InvalidDrop": "Only actor documents can be dropped here.",
           "MissingActor": "The linked actor could not be found."
         }
+      },
+      "Tactical": {
+        "Notifications": {
+          "NoValue": "This group test has no aggregated value yet."
+        },
+        "Empty": {
+          "UnsupportedMembers": "Add TWDU characters or NPCs to see tactical aggregation."
+        }
       }
     },
     "Party": {
@@ -218,13 +226,18 @@
         "Sections": {
           "Members": "Members",
           "Description": "Description",
-          "Notes": "Notes"
+          "Notes": "Notes",
+          "Tactical": "Attributes & Skills"
         },
         "Fields": {
           "Faction": "Faction",
           "Status": "Status",
           "Location": "Location",
-          "MemberCount": "Members"
+          "MemberCount": "Members",
+          "SkillSource": "Skill Source"
+        },
+        "SourceOptions": {
+          "Group": "Group"
         },
         "Actions": {
           "RemoveMember": "Remove member"

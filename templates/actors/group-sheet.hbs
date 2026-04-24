@@ -111,7 +111,8 @@
         </section>
 
         <section class="zut-sheet__section zut-group-text-panel">
-          <div class="zut-field">
+          <div class="zut-group-text-panel__fields">
+            <div class="zut-field">
             <label class="zut-field__label" for="{{rootId}}-description">
               {{localize "ZUT.Sheets.Group.Sections.Description"}}
             </label>
@@ -120,12 +121,12 @@
               class="zut-field__textarea"
               name="system.summary.description"
               placeholder="{{localize "ZUT.Sheets.Group.Placeholders.Description"}}"
-              rows="10"
+              rows="3"
               {{#unless editable}}disabled{{/unless}}
             >{{system.summary.description}}</textarea>
-          </div>
+            </div>
 
-          <div class="zut-field">
+            <div class="zut-field">
             <label class="zut-field__label" for="{{rootId}}-notes">
               {{localize "ZUT.Sheets.Group.Sections.Notes"}}
             </label>
@@ -134,9 +135,39 @@
               class="zut-field__textarea"
               name="system.summary.notes"
               placeholder="{{localize "ZUT.Sheets.Group.Placeholders.Notes"}}"
-              rows="10"
+              rows="3"
               {{#unless editable}}disabled{{/unless}}
             >{{system.summary.notes}}</textarea>
+            </div>
+          </div>
+
+          <div class="zut-group-source-row">
+            <label class="zut-party-source-control" for="{{rootId}}-skill-source-enabled">
+              <input
+                id="{{rootId}}-skill-source-enabled"
+                class="zut-party-source-control__checkbox"
+                type="checkbox"
+                name="system.details.skillSourceEnabled"
+                {{#if skillSourceEnabled}}checked{{/if}}
+                {{#unless editable}}disabled{{/unless}}
+              >
+              <span class="zut-party-source-control__label">
+                {{localize "ZUT.Sheets.Group.Fields.SkillSource"}}
+              </span>
+            </label>
+
+            <select
+              id="{{rootId}}-skill-source-target"
+              class="zut-field__input zut-party-source-control__select"
+              name="system.details.skillSourceTarget"
+              {{#unless editable}}disabled{{else}}{{#unless skillSourceEnabled}}disabled{{/unless}}{{/unless}}
+            >
+              {{#each skillSourceOptions as |option|}}
+                <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>
+                  {{option.label}}
+                </option>
+              {{/each}}
+            </select>
           </div>
         </section>
       </div>
@@ -213,6 +244,78 @@
             {{/if}}
           </div>
         </div>
+      </section>
+
+      <section class="zut-sheet__section zut-group-tactical-panel">
+        <div class="zut-group-tactical-panel__header">
+          <div
+            class="zut-field__label zut-field__label--section"
+            role="heading"
+            aria-level="2"
+          >
+            {{localize "ZUT.Sheets.Group.Sections.Tactical"}}
+          </div>
+        </div>
+
+        {{#if hasTacticalData}}
+          <div class="zut-group-tactical-system-grid">
+            {{#each tactical.attributeGroups as |group|}}
+              <section class="zut-group-tactical-group" data-attribute-group="{{group.key}}">
+                <div class="zut-group-tactical-group__header">
+                  <button
+                    class="zut-group-rollable zut-group-tactical-group__label"
+                    type="button"
+                    data-group-roll="true"
+                    data-roll-kind="attribute"
+                    data-roll-key="{{group.attribute.key}}"
+                    {{#unless group.attribute.hasValue}}disabled{{/unless}}
+                  >
+                    {{group.attribute.label}}
+                  </button>
+
+                  <input
+                    class="zut-group-tactical-group__value"
+                    type="text"
+                    value="{{#if group.attribute.hasValue}}{{group.attribute.value}}{{/if}}"
+                    readonly
+                    tabindex="-1"
+                  >
+                </div>
+
+                <div class="zut-group-tactical-group__skills">
+                  {{#each group.skills as |skill|}}
+                    <div class="zut-group-tactical-skill-row">
+                      <button
+                        class="zut-group-rollable zut-group-tactical-skill-row__label"
+                        type="button"
+                        data-group-roll="true"
+                        data-roll-kind="skill"
+                        data-roll-key="{{skill.key}}"
+                        {{#unless skill.hasValue}}disabled{{/unless}}
+                      >
+                        {{skill.label}}
+                      </button>
+
+                      <input
+                        class="zut-group-tactical-skill-row__value"
+                        type="text"
+                        value="{{#if skill.hasValue}}{{skill.value}}{{/if}}"
+                        readonly
+                        tabindex="-1"
+                      >
+                    </div>
+                  {{/each}}
+                </div>
+              </section>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="zut-empty-state">
+            <p class="zut-empty-state__text">
+              {{localize "ZUT.Group.Tactical.Empty.UnsupportedMembers"}}
+            </p>
+          </div>
+        {{/if}}
       </section>
     </div>
   </div>

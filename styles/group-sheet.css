@@ -5,12 +5,17 @@
 .zut-group-shell__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "left members"
+    "tactical tactical";
   gap: var(--zut-space-3);
-  align-items: start;
+  align-items: stretch;
   min-width: 0;
 }
 
 .zut-group-shell__left {
+  grid-area: left;
   display: flex;
   flex-direction: column;
   gap: var(--zut-space-3);
@@ -26,6 +31,7 @@
 
 .zut-group-name-panel {
   justify-content: center;
+  min-height: 5.85rem;
 }
 
 .zut-group-name-panel__header {
@@ -35,7 +41,17 @@
 }
 
 .zut-group-members-panel {
-  min-height: 100%;
+  grid-area: members;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.zut-group-members-panel .zut-field--panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .zut-group-members-panel__body {
@@ -44,8 +60,8 @@
   flex-direction: column;
   min-width: 0;
   width: 100%;
-  min-height: 45rem;
-  max-height: 45rem;
+  min-height: 0;
+  max-height: 29.5rem;
   overflow-y: auto;
 }
 
@@ -67,6 +83,10 @@
   gap: var(--zut-space-2) var(--zut-space-3);
   min-width: 0;
   align-items: stretch;
+}
+
+.zut-group-identity-panel {
+  min-height: 12.5rem;
 }
 
 .zut-group-identity-grid__portrait-slot {
@@ -128,6 +148,163 @@
 .zut-group-header__count-value {
   font-size: 1rem;
   font-weight: 700;
+}
+
+.zut-group-text-panel {
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-height: 16.25rem;
+}
+
+.zut-group-text-panel__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-1);
+  min-width: 0;
+}
+
+.zut-group-text-panel .zut-field__textarea {
+  height: 4.1rem;
+  min-height: 4.1rem;
+  resize: none;
+}
+
+.zut-group-source-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--zut-space-3);
+  min-width: 0;
+}
+
+.zut-group-tactical-panel {
+  grid-area: tactical;
+  display: flex;
+  flex-direction: column;
+  gap: var(--zut-space-1);
+  padding-block: var(--zut-space-2);
+  min-width: 0;
+}
+
+.zut-group-tactical-panel__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--zut-space-2);
+}
+
+.zut-group-name-panel .zut-field__label,
+.zut-group-members-panel .zut-field__label,
+.zut-group-tactical-panel__header .zut-field__label {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.zut-group-tactical-system-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--zut-text-color, inherit);
+}
+
+.zut-group-tactical-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--zut-border-color);
+}
+
+.zut-group-tactical-group:last-child {
+  border-right: 0;
+}
+
+.zut-group-tactical-group__header,
+.zut-group-tactical-skill-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--zut-space-2);
+  padding: 0.375rem 0.625rem;
+  border-bottom: 1px solid var(--zut-border-color);
+}
+
+.zut-group-tactical-group__skills {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.zut-group-tactical-skill-row:last-child {
+  border-bottom: 0;
+}
+
+.zut-group-rollable {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.zut-group-rollable:hover:not(:disabled),
+.zut-group-rollable:focus-visible:not(:disabled) {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.zut-group-rollable:disabled {
+  cursor: default;
+  opacity: 0.55;
+  text-decoration: none;
+}
+
+.zut-group-tactical-group__label,
+.zut-group-tactical-skill-row__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+.zut-group-tactical-skill-row__label {
+  font-weight: 600;
+}
+
+.zut-group-tactical-group__value,
+.zut-group-tactical-skill-row__value {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  padding: 0.125rem 0.35rem;
+  border: 1px solid var(--zut-border-color);
+  border-radius: var(--zut-radius-sm);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.96);
+  font: inherit;
+  font-weight: 700;
+  text-align: right;
+}
+
+.zut-group-tactical-group__value[readonly],
+.zut-group-tactical-skill-row__value[readonly] {
+  cursor: default;
+}
+
+.zut-group-tactical-group__header {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.zut-group-tactical-group__label {
+  font-size: 0.98rem;
+  text-transform: uppercase;
 }
 
 .zut-member-list {
@@ -230,6 +407,18 @@
 @media (max-width: 980px) {
   .zut-group-shell__grid {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "left"
+      "members"
+      "tactical";
+  }
+
+  .zut-group-tactical-system-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zut-group-tactical-group:nth-child(2n) {
+    border-right: 0;
   }
 }
 
@@ -266,5 +455,19 @@
 
   .zut-member-card__remove {
     justify-self: end;
+  }
+
+  .zut-group-source-row,
+  .zut-group-tactical-system-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zut-group-tactical-group {
+    border-right: 0;
+    border-bottom: 1px solid var(--zut-border-color);
+  }
+
+  .zut-group-tactical-group:last-child {
+    border-bottom: 0;
   }
 }

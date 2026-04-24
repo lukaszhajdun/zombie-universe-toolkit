@@ -83,6 +83,14 @@
           "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
           "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
         }
+      },
+      "Tactical": {
+        "Notifications": {
+          "NoValue": "Ten test grupy nie ma jeszcze zagregowanej wartości."
+        },
+        "Empty": {
+          "UnsupportedMembers": "Dodaj postacie lub NPC z TWDU, aby zobaczyć agregację taktyczną."
+        }
       }
     },
     "Party": {
@@ -218,13 +226,18 @@
         "Sections": {
           "Members": "Członkowie",
           "Description": "Opis",
-          "Notes": "Notatki"
+          "Notes": "Notatki",
+          "Tactical": "Atrybuty i skille"
         },
         "Fields": {
           "Faction": "Frakcja",
           "Status": "Status",
           "Location": "Lokalizacja",
-          "MemberCount": "Członkowie"
+          "MemberCount": "Członkowie",
+          "SkillSource": "Skill Source"
+        },
+        "SourceOptions": {
+          "Group": "Grupa"
         },
         "Actions": {
           "RemoveMember": "Usuń członka"
