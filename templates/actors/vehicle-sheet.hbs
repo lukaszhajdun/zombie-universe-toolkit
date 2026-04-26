@@ -113,11 +113,20 @@
               data-role-transfer-target-type="slot"
             >
               {{#if hasOwner}}
-                <article class="zut-owner-card {{#unless ownerData.exists}}zut-owner-card--missing{{/unless}}">
+                <article
+                  class="zut-owner-card {{#unless ownerData.exists}}zut-owner-card--missing{{/unless}}"
+                  data-uuid="{{ownerData.uuid}}"
+                  data-actor-id="{{ownerData.id}}"
+                  data-role-transfer-source="true"
+                  data-role-transfer-source-role="owner"
+                  data-role-transfer-source-type="slot"
+                  draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
+                >
                   <button
                     class="zut-owner-card__main"
                     type="button"
                     data-owner-open="true"
+                    draggable="{{#if @root.canEdit}}true{{else}}false{{/if}}"
                   >
                     <span class="zut-owner-card__media">
                       <span class="zut-owner-card__thumb">

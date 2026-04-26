@@ -73,6 +73,10 @@ function hasActorReferenceInList(references, candidateReference) {
   return references.some(reference => isSameActorReference(reference, candidateReference));
 }
 
+function findActorReferenceIndex(references, candidateReference) {
+  return references.findIndex(reference => isSameActorReference(reference, candidateReference));
+}
+
 export function getVehiclePassengerReferenceByIndex(actor, passengerIndex) {
   const passengers = getVehiclePassengersArray(actor);
   if (!Number.isInteger(passengerIndex)) return null;
@@ -180,22 +184,44 @@ export async function assignVehicleDriver(actor, candidateActor) {
     return { status: "invalidType" };
   }
 
-  if (hasVehicleDriver(actor, candidateActor)) {
+  const candidateReference = createActorReference(candidateActor);
+  const driverReference = getVehicleDriverReference(actor);
+
+  if (driverReference && isSameActorReference(driverReference, candidateReference)) {
     return { status: "alreadyDriver" };
   }
 
-  if (getVehicleDriverReference(actor)) {
-    return { status: "occupied" };
-  }
-
-  if (hasVehiclePassenger(actor, candidateActor)) {
-    return { status: "alreadyPassenger" };
-  }
-
+  const passengers = getVehiclePassengersArray(actor);
+  const passengerIndex = findActorReferenceIndex(passengers, candidateReference);
   const capacity = getVehiclePassengerCapacity(actor);
   const occupancyCount = getVehicleOccupancyCount(actor);
 
-  if (occupancyCount >= capacity) {
+  if (passengerIndex >= 0) {
+    const nextPassengers = [...passengers];
+
+    if (driverReference) {
+      nextPassengers[passengerIndex] = driverReference;
+    } else {
+      nextPassengers.splice(passengerIndex, 1);
+    }
+
+    await actor.update({
+      "system.driver.actor": candidateReference,
+      "system.passengers": nextPassengers
+    });
+
+    return {
+      status: "assigned",
+      driver: candidateActor,
+      capacity,
+      count: occupancyCount
+    };
+  }
+
+  const driverAlreadyPassenger = driverReference && hasActorReferenceInList(passengers, driverReference);
+  const needsAdditionalSeat = !driverReference || !driverAlreadyPassenger;
+
+  if (needsAdditionalSeat && occupancyCount >= capacity) {
     return {
       status: "full",
       capacity,
@@ -203,15 +229,21 @@ export async function assignVehicleDriver(actor, candidateActor) {
     };
   }
 
-  await actor.update({
-    "system.driver.actor": createActorReference(candidateActor)
-  });
+  const updateData = {
+    "system.driver.actor": candidateReference
+  };
+
+  if (driverReference && !driverAlreadyPassenger) {
+    updateData["system.passengers"] = [...passengers, driverReference];
+  }
+
+  await actor.update(updateData);
 
   return {
     status: "assigned",
     driver: candidateActor,
     capacity,
-    count: occupancyCount + 1
+    count: occupancyCount + (needsAdditionalSeat ? 1 : 0)
   };
 }
 

@@ -30,7 +30,8 @@ import {
   prepareVehicleDriver,
   prepareVehicleOwner,
   prepareVehiclePassengers,
-  removeVehiclePassengerByIndex
+  removeVehiclePassengerByIndex,
+  VEHICLE_ROLE_KEYS
 } from "../services/vehicle-actor.service.js";
 import {
   getTwduVehicleItemSnapshot,
@@ -264,6 +265,10 @@ export class VehicleActorSheet extends BaseModuleActorSheet {
         return null;
       }
 
+      if (transferData.sourceRole === VEHICLE_ROLE_KEYS.OWNER) {
+        return this._handleOwnerRoleTransfer(draggedActor, target);
+      }
+
       return this._handleInternalRoleTransfer(draggedActor, transferData, target);
     }
 
@@ -327,6 +332,23 @@ export class VehicleActorSheet extends BaseModuleActorSheet {
 
       default:
         ui.notifications?.warn(game.i18n.localize("ZUT.Vehicle.Passengers.Notifications.InvalidDrop"));
+        return null;
+    }
+  }
+
+  async _handleOwnerRoleTransfer(draggedActor, target) {
+    switch (target?.targetRole) {
+      case VEHICLE_ROLE_KEYS.DRIVER:
+        return this._handleDriverDrop(draggedActor);
+
+      case VEHICLE_ROLE_KEYS.PASSENGERS:
+        return this._handlePassengerDrop(draggedActor);
+
+      case VEHICLE_ROLE_KEYS.OWNER:
+        return draggedActor;
+
+      default:
+        ui.notifications?.warn("ZUT internal drop failed: transfer to this target is not allowed.");
         return null;
     }
   }
