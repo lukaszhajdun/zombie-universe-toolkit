@@ -621,7 +621,7 @@ export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV
     if (!fieldName) return;
 
     const value = this._getAutoSaveFieldValue(element);
-    const updateData = foundry.utils.expandObject({ [fieldName]: value });
+    const updateData = this._getAutoSaveFieldUpdateData(element, fieldName, value);
 
     try {
       await this.document.update(updateData);
@@ -641,5 +641,9 @@ export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV
     }
 
     return element.value;
+  }
+
+  _getAutoSaveFieldUpdateData(_element, fieldName, value) {
+    return foundry.utils.expandObject({ [fieldName]: value });
   }
 }

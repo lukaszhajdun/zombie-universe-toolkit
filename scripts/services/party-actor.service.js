@@ -9,7 +9,7 @@ import {
   prepareTwduGroupRollMembers
 } from "./twdu-group-rolls.service.js";
 
-const PARTY_SOURCE_VALUE = "party";
+export const PARTY_SOURCE_VALUE = "party";
 const PARTY_GROUP_ROLL_CONTEXT = Object.freeze({
   aggregateSourceValue: PARTY_SOURCE_VALUE,
   aggregateSourceLabelKey: "ZUT.Sheets.Party.SourceOptions.Party",

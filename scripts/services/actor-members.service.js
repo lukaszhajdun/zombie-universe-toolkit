@@ -7,6 +7,8 @@ import {
   isSameActorReference
 } from "./actor-ref.service.js";
 
+const SUPPORTED_MEMBER_ACTOR_TYPES = new Set(["character", "npc"]);
+
 export function getActorMembersArray(actor) {
   return Array.isArray(actor?.system?.members) ? [...actor.system.members] : [];
 }
@@ -34,6 +36,10 @@ function isGroupOrPartyActor(actor) {
   return actorTypeKey === ACTOR_TYPES.GROUP || actorTypeKey === ACTOR_TYPES.PARTY;
 }
 
+function isSupportedMemberActor(actor) {
+  return actor?.documentName === "Actor" && SUPPORTED_MEMBER_ACTOR_TYPES.has(actor.type);
+}
+
 export async function addActorMember(actor, candidateActor) {
   if (!actor || actor.documentName !== "Actor") {
     return { status: "invalid" };
@@ -45,6 +51,10 @@ export async function addActorMember(actor, candidateActor) {
 
   if (isSameActorDocument(actor, candidateActor)) {
     return { status: "self" };
+  }
+
+  if (!isSupportedMemberActor(candidateActor)) {
+    return { status: "invalidType" };
   }
 
   if (hasActorMember(actor, candidateActor)) {

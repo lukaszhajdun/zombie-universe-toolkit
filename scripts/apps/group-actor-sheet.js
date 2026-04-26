@@ -10,6 +10,7 @@ import {
 } from "../services/actor-ref.service.js";
 import {
   addGroupMember,
+  GROUP_SOURCE_VALUE,
   getGroupRollData,
   prepareGroupContext,
   removeGroupMemberByIndex
@@ -74,6 +75,19 @@ export class GroupActorSheet extends BaseModuleActorSheet {
       },
       { inplace: false }
     );
+  }
+
+  _getAutoSaveFieldUpdateData(element, fieldName, value) {
+    const updateData = super._getAutoSaveFieldUpdateData(element, fieldName, value);
+
+    if (fieldName === "system.details.skillSourceEnabled" && value === false) {
+      foundry.utils.mergeObject(
+        updateData,
+        foundry.utils.expandObject({ "system.details.skillSourceTarget": GROUP_SOURCE_VALUE })
+      );
+    }
+
+    return updateData;
   }
 
   _getSheetClickActionMap() {

@@ -8,6 +8,7 @@ import { openActorReference } from "../services/actor-ref.service.js";
 import {
   addPartyMember,
   getPartyRollData,
+  PARTY_SOURCE_VALUE,
   preparePartyContext,
   removePartyMemberByIndex
 } from "../services/party-actor.service.js";
@@ -70,6 +71,19 @@ export class PartyActorSheet extends BaseModuleActorSheet {
       },
       { inplace: false }
     );
+  }
+
+  _getAutoSaveFieldUpdateData(element, fieldName, value) {
+    const updateData = super._getAutoSaveFieldUpdateData(element, fieldName, value);
+
+    if (fieldName === "system.details.skillSourceEnabled" && value === false) {
+      foundry.utils.mergeObject(
+        updateData,
+        foundry.utils.expandObject({ "system.details.skillSourceTarget": PARTY_SOURCE_VALUE })
+      );
+    }
+
+    return updateData;
   }
 
   _getSheetClickActionMap() {

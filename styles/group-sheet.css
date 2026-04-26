@@ -50,18 +50,18 @@
 
 .zut-group-members-panel .zut-field--panel {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   min-height: 0;
 }
 
 .zut-group-members-panel__body {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-direction: column;
   min-width: 0;
   width: 100%;
   min-height: 0;
-  max-height: 29.5rem;
   overflow-y: auto;
 }
 
