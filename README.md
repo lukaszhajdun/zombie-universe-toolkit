@@ -2,7 +2,7 @@
 
 Zombie Universe Toolkit is a Foundry VTT module for The Walking Dead Universe
 RPG. It adds focused world-entity actor sheets and TWDU-aware tools for managing
-groups, parties, vehicles, factions, storage, and vehicle driver item
+groups, vehicles, factions, storage, and vehicle driver item
 integration.
 
 The module is currently designed and tested for Foundry VTT 13 and the `twdu`
@@ -12,11 +12,10 @@ system.
 
 - Module actor types for:
   - groups,
-  - parties,
   - vehicles,
   - factions.
 - Custom actor sheets with edit locking and ownership-aware controls.
-- Group and party member management with TWDU tactical roll support.
+- Group member management with TWDU tactical roll support.
 - Vehicle role management:
   - owner,
   - driver,
@@ -59,12 +58,10 @@ Then enable **Zombie Universe Toolkit** in your TWDU world.
 1. Enable the module in a TWDU world.
 2. Create one of the module actor types:
    - `group`,
-   - `party`,
    - `vehicle`,
    - `faction`.
 3. Open the actor sheet and configure the actor.
-4. For group and party actors, drag TWDU character or NPC actors into the member
-   list.
+4. For group actors, drag TWDU character or NPC actors into the member list.
 5. For vehicle actors, assign owner, driver, and passengers from the vehicle
    sheet.
 6. To integrate a TWDU vehicle item, import or drop a TWDU item of type
@@ -119,7 +116,7 @@ Storage rules:
 
 The module performs cleanup for common world maintenance cases:
 
-- Deleted actors are removed from group and party member lists.
+- Deleted actors are removed from group member lists.
 - Deleted actors are cleared from vehicle owner, driver, and passenger roles.
 - Deleted vehicle actors cause linked driver clone items to be removed from
   other actors.

@@ -141,23 +141,23 @@
           </div>
 
           <div class="zut-group-source-row">
-            <label class="zut-party-source-control" for="{{rootId}}-skill-source-enabled">
+            <label class="zut-group-source-control" for="{{rootId}}-skill-source-enabled">
               <input
                 id="{{rootId}}-skill-source-enabled"
-                class="zut-party-source-control__checkbox"
+                class="zut-group-source-control__checkbox"
                 type="checkbox"
                 name="system.details.skillSourceEnabled"
                 {{#if skillSourceEnabled}}checked{{/if}}
                 {{#unless editable}}disabled{{/unless}}
               >
-              <span class="zut-party-source-control__label">
+              <span class="zut-group-source-control__label">
                 {{localize "ZUT.Sheets.Group.Fields.SkillSource"}}
               </span>
             </label>
 
             <select
               id="{{rootId}}-skill-source-target"
-              class="zut-field__input zut-party-source-control__select"
+              class="zut-field__input zut-group-source-control__select"
               name="system.details.skillSourceTarget"
               {{#unless editable}}disabled{{else}}{{#unless skillSourceEnabled}}disabled{{/unless}}{{/unless}}
             >

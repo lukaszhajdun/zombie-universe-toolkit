@@ -30,13 +30,6 @@ function isSameActorDocument(left, right) {
   return false;
 }
 
-function isGroupOrPartyActor(actor) {
-  if (!actor || actor.documentName !== "Actor") return false;
-
-  const actorTypeKey = toModuleActorKey(actor.type) ?? actor.type;
-  return actorTypeKey === ACTOR_TYPES.GROUP || actorTypeKey === ACTOR_TYPES.PARTY;
-}
-
 function isGroupActor(actor) {
   if (!actor || actor.documentName !== "Actor") return false;
 
@@ -164,7 +157,7 @@ export async function cleanupActorMemberReferencesForDeletedActorReference(delet
   let removedMembers = 0;
 
   for (const actor of game.actors ?? []) {
-    if (!isGroupOrPartyActor(actor)) continue;
+    if (!isGroupActor(actor)) continue;
     if (deletedActorUuid && actor.uuid === deletedActorUuid) continue;
 
     const members = getActorMembersArray(actor);

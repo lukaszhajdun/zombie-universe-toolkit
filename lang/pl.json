@@ -29,16 +29,6 @@
             "Hint": "Jeśli włączone, nowo tworzeni aktorzy Group będą mieli w Prototype Token włączone Lock Artwork Rotation."
           }
         },
-        "Party": {
-          "DefaultLinkActorData": {
-            "Name": "Party Actor: domyślne Link Actor Data",
-            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Party będą mieli w Prototype Token włączone Link Actor Data."
-          },
-          "DefaultLockArtworkRotation": {
-            "Name": "Party Actor: domyślne Lock Artwork Rotation",
-            "Hint": "Jeśli włączone, nowo tworzeni aktorzy Party będą mieli w Prototype Token włączone Lock Artwork Rotation."
-          }
-        },
         "Vehicle": {
           "DefaultLinkActorData": {
             "Name": "Vehicle Actor: domyślne Link Actor Data",
@@ -91,42 +81,6 @@
           "NoValue": "Ten test grupy nie ma jeszcze zagregowanej wartości."
         },
         "Empty": {
-          "UnsupportedMembers": "Dodaj postacie lub NPC z TWDU, aby zobaczyć agregację taktyczną."
-        }
-      }
-    },
-    "Party": {
-      "Members": {
-        "UnknownName": "Nieznany aktor",
-        "MissingActorLabel": "Nie znaleziono aktora",
-        "Notifications": {
-          "GroupAdded": "Dozwoleni członkowie grupy zostali dodani.",
-          "GroupNoEligible": "Ta grupa nie ma kwalifikujących się członków do dodania.",
-          "Added": "Aktor został dodany do drużyny.",
-          "AlreadyAdded": "Ten aktor jest już w drużynie.",
-          "CannotAddSelf": "Nie możesz dodać aktora drużyny do samego siebie.",
-          "DropLocked": "Odblokuj edycję, aby dodawać członków.",
-          "InvalidDrop": "W to miejsce można upuszczać tylko aktorów.",
-          "MissingActor": "Nie udało się odnaleźć powiązanego aktora."
-        }
-      },
-      "Tactical": {
-        "Sections": {
-          "Attributes": "Najlepsze atrybuty",
-          "Skills": "Najlepsze skille"
-        },
-        "Summary": "Obsługiwani członkowie TWDU",
-        "Notifications": {
-          "NoValue": "Ten test drużyny nie ma jeszcze zagregowanej wartości."
-        },
-        "Breakdowns": {
-          "Attribute": "{label} {value}",
-          "PcSkill": "{attributeLabel} {attributeValue} + {skillLabel} {skillValue}",
-          "NpcSkill": "Skill NPC {value}"
-        },
-        "Empty": {
-          "Attribute": "Żaden obsługiwany bohater nie dostarcza jeszcze tego atrybutu.",
-          "Skill": "Żaden obsługiwany członek nie dostarcza jeszcze tego skilla.",
           "UnsupportedMembers": "Dodaj postacie lub NPC z TWDU, aby zobaczyć agregację taktyczną."
         }
       }
@@ -256,34 +210,6 @@
           "Location": "np. Północna autostrada",
           "Description": "Opisz grupę...",
           "Notes": "Dodaj notatki do tej grupy..."
-        }
-      },
-      "Party": {
-        "Label": "Drużyna (ZU)",
-        "Sections": {
-          "Members": "Członkowie",
-          "Tactical": "Atrybuty i skille"
-        },
-        "Fields": {
-          "MemberCount": "Członkowie",
-          "Mode": "Tryb",
-          "SkillSource": "Skill Source"
-        },
-        "SourceOptions": {
-          "Party": "Party"
-        },
-        "Modes": {
-          "Simple": "Prosty",
-          "Tactical": "Taktyczny"
-        },
-        "Actions": {
-          "RemoveMember": "Usuń członka"
-        },
-        "Empty": {
-          "Members": "Nie dodano jeszcze członków drużyny. Przeciągnij tutaj aktorów."
-        },
-        "Placeholders": {
-          "Name": "Nazwa drużyny"
         }
       },
       "Vehicle": {
@@ -488,12 +414,10 @@
   "TYPES": {
     "Actor": {
       "group": "Grupa",
-      "party": "Drużyna",
       "vehicle": "Pojazd",
       "faction": "Frakcja",
       "zombie-universe-toolkit": {
         "group": "Grupa (ZU)",
-        "party": "Drużyna (ZU)",
         "vehicle": "Pojazd (ZU)",
         "faction": "Frakcja (ZU)"
       }

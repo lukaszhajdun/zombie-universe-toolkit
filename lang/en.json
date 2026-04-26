@@ -29,16 +29,6 @@
             "Hint": "If enabled, newly created Group actors will have Lock Artwork Rotation enabled in Prototype Token."
           }
         },
-        "Party": {
-          "DefaultLinkActorData": {
-            "Name": "Party Actor: Default Link Actor Data",
-            "Hint": "If enabled, newly created Party actors will have Link Actor Data enabled in Prototype Token."
-          },
-          "DefaultLockArtworkRotation": {
-            "Name": "Party Actor: Default Lock Artwork Rotation",
-            "Hint": "If enabled, newly created Party actors will have Lock Artwork Rotation enabled in Prototype Token."
-          }
-        },
         "Vehicle": {
           "DefaultLinkActorData": {
             "Name": "Vehicle Actor: Default Link Actor Data",
@@ -91,42 +81,6 @@
           "NoValue": "This group test has no aggregated value yet."
         },
         "Empty": {
-          "UnsupportedMembers": "Add TWDU characters or NPCs to see tactical aggregation."
-        }
-      }
-    },
-    "Party": {
-      "Members": {
-        "UnknownName": "Unknown Actor",
-        "MissingActorLabel": "Actor not found",
-        "Notifications": {
-          "Added": "Actor added to the party.",
-          "AlreadyAdded": "This actor is already in the party.",
-          "CannotAddSelf": "You cannot add the party actor to itself.",
-          "DropLocked": "Unlock editing before adding members.",
-          "GroupAdded": "Eligible group members added.",
-          "GroupNoEligible": "This group has no eligible members to add.",
-          "InvalidDrop": "Only actor documents can be dropped here.",
-          "MissingActor": "The linked actor could not be found."
-        }
-      },
-      "Tactical": {
-        "Sections": {
-          "Attributes": "Best Attributes",
-          "Skills": "Best Skills"
-        },
-        "Summary": "Supported TWDU members",
-        "Notifications": {
-          "NoValue": "This party test has no aggregated value yet."
-        },
-        "Breakdowns": {
-          "Attribute": "{label} {value}",
-          "PcSkill": "{attributeLabel} {attributeValue} + {skillLabel} {skillValue}",
-          "NpcSkill": "NPC skill {value}"
-        },
-        "Empty": {
-          "Attribute": "No supported character provides this attribute yet.",
-          "Skill": "No supported member provides this skill yet.",
           "UnsupportedMembers": "Add TWDU characters or NPCs to see tactical aggregation."
         }
       }
@@ -256,34 +210,6 @@
           "Location": "e.g. Northern Highway",
           "Description": "Describe the group...",
           "Notes": "Add notes for this group..."
-        }
-      },
-      "Party": {
-        "Label": "Party (ZU)",
-        "Sections": {
-          "Members": "Members",
-          "Tactical": "Attributes & Skills"
-        },
-        "Fields": {
-          "MemberCount": "Members",
-          "Mode": "Mode",
-          "SkillSource": "Skill Source"
-        },
-        "SourceOptions": {
-          "Party": "Party"
-        },
-        "Modes": {
-          "Simple": "Simple",
-          "Tactical": "Tactical"
-        },
-        "Actions": {
-          "RemoveMember": "Remove member"
-        },
-        "Empty": {
-          "Members": "No party members have been added yet. Drag actors here."
-        },
-        "Placeholders": {
-          "Name": "Party name"
         }
       },
       "Vehicle": {
@@ -488,12 +414,10 @@
   "TYPES": {
     "Actor": {
       "group": "Group",
-      "party": "Party",
       "vehicle": "Vehicle",
       "faction": "Faction",
       "zombie-universe-toolkit": {
         "group": "Group (ZU)",
-        "party": "Party (ZU)",
         "vehicle": "Vehicle (ZU)",
         "faction": "Faction (ZU)"
       }

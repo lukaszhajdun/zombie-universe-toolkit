@@ -1,7 +1,7 @@
 {
   "id": "zombie-universe-toolkit",
   "title": "Zombie Universe Toolkit",
-  "description": "<p>World entity actors and TWDU-focused tools for Foundry VTT: groups, parties, vehicles, factions, storage, and vehicle driver integration for The Walking Dead Universe RPG.</p>",
+  "description": "<p>World entity actors and TWDU-focused tools for Foundry VTT: groups, vehicles, factions, storage, and vehicle driver integration for The Walking Dead Universe RPG.</p>",
   "version": "0.2.0",
   "url": "https://github.com/lukaszhajdun/zombie-universe-toolkit",
   "manifest": "https://raw.githubusercontent.com/lukaszhajdun/zombie-universe-toolkit/main/module.json",
@@ -37,9 +37,6 @@
     },
     {
       "src": "styles/group-sheet.css"
-    },
-    {
-      "src": "styles/party-sheet.css"
     },
     {
       "src": "styles/vehicle-sheet.css"
@@ -88,7 +85,6 @@
   "documentTypes": {
     "Actor": {
       "group": {},
-      "party": {},
       "vehicle": {},
       "faction": {}
     }

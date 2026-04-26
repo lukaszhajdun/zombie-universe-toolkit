@@ -177,6 +177,26 @@
   min-width: 0;
 }
 
+.zut-group-source-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zut-space-2);
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.zut-group-source-control__checkbox {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.zut-group-source-control__label,
+.zut-group-source-control__select {
+  min-width: 0;
+}
+
 .zut-group-tactical-panel {
   grid-area: tactical;
   display: flex;

@@ -21,14 +21,14 @@ export function registerVehicleCleanupHooks() {
         if (result.status !== "cleaned") return;
         if (!result.updatedActors && !result.removedMembers) return;
 
-        logger.debug("Cleaned group and party member references after actor deletion.", {
+        logger.debug("Cleaned group member references after actor deletion.", {
           deletedActorUuid: actor?.uuid ?? "",
           deletedActorName: actor?.name ?? "",
           result
         });
       })
       .catch(error => {
-        logger.error("Failed to clean group and party member references after actor deletion.", error);
+        logger.error("Failed to clean group member references after actor deletion.", error);
       });
 
     void requestCleanupVehicleRoleReferencesForDeletedActor(actor)
