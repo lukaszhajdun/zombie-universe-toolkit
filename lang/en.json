@@ -80,6 +80,8 @@
           "AlreadyAdded": "This actor is already in the group.",
           "CannotAddSelf": "You cannot add the group actor to itself.",
           "DropLocked": "Unlock editing before adding members.",
+          "GroupAdded": "Eligible group members added.",
+          "GroupNoEligible": "This group has no eligible members to add.",
           "InvalidDrop": "Only actor documents can be dropped here.",
           "MissingActor": "The linked actor could not be found."
         }
@@ -102,6 +104,8 @@
           "AlreadyAdded": "This actor is already in the party.",
           "CannotAddSelf": "You cannot add the party actor to itself.",
           "DropLocked": "Unlock editing before adding members.",
+          "GroupAdded": "Eligible group members added.",
+          "GroupNoEligible": "This group has no eligible members to add.",
           "InvalidDrop": "Only actor documents can be dropped here.",
           "MissingActor": "The linked actor could not be found."
         }

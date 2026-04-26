@@ -135,8 +135,16 @@ export class GroupActorSheet extends BaseModuleActorSheet {
         ui.notifications?.info(game.i18n.localize("ZUT.Group.Members.Notifications.Added"));
         return actor;
 
+      case "groupAdded":
+        ui.notifications?.info(game.i18n.localize("ZUT.Group.Members.Notifications.GroupAdded"));
+        return actor;
+
       case "duplicate":
         ui.notifications?.warn(game.i18n.localize("ZUT.Group.Members.Notifications.AlreadyAdded"));
+        return null;
+
+      case "groupNoEligible":
+        ui.notifications?.warn(game.i18n.localize("ZUT.Group.Members.Notifications.GroupNoEligible"));
         return null;
 
       case "self":

@@ -4,7 +4,8 @@ import {
 } from "../core/constants.js";
 import {
   createActorReference,
-  isSameActorReference
+  isSameActorReference,
+  resolveActorReference
 } from "./actor-ref.service.js";
 
 const SUPPORTED_MEMBER_ACTOR_TYPES = new Set(["character", "npc"]);
@@ -36,8 +37,66 @@ function isGroupOrPartyActor(actor) {
   return actorTypeKey === ACTOR_TYPES.GROUP || actorTypeKey === ACTOR_TYPES.PARTY;
 }
 
+function isGroupActor(actor) {
+  if (!actor || actor.documentName !== "Actor") return false;
+
+  const actorTypeKey = toModuleActorKey(actor.type) ?? actor.type;
+  return actorTypeKey === ACTOR_TYPES.GROUP;
+}
+
 function isSupportedMemberActor(actor) {
   return actor?.documentName === "Actor" && SUPPORTED_MEMBER_ACTOR_TYPES.has(actor.type);
+}
+
+function hasActorReferenceInList(references, candidateReference) {
+  return references.some(reference => isSameActorReference(reference, candidateReference));
+}
+
+async function getEligibleGroupMemberActors(actor, groupActor) {
+  const currentMembers = getActorMembersArray(actor);
+  const groupMembers = getActorMembersArray(groupActor);
+  const eligibleActors = [];
+  const selectedReferences = [];
+
+  for (const memberReference of groupMembers) {
+    const resolvedActor = await resolveActorReference(memberReference);
+    if (!resolvedActor || resolvedActor.documentName !== "Actor") continue;
+    if (!isSupportedMemberActor(resolvedActor)) continue;
+
+    const resolvedReference = createActorReference(resolvedActor);
+    if (hasActorReferenceInList(currentMembers, resolvedReference)) continue;
+    if (hasActorReferenceInList(selectedReferences, resolvedReference)) continue;
+
+    eligibleActors.push(resolvedActor);
+    selectedReferences.push(resolvedReference);
+  }
+
+  return eligibleActors;
+}
+
+async function addActorMemberGroup(actor, groupActor) {
+  const members = getActorMembersArray(actor);
+  const eligibleActors = await getEligibleGroupMemberActors(actor, groupActor);
+
+  if (eligibleActors.length === 0) {
+    return {
+      status: "groupNoEligible",
+      addedCount: 0
+    };
+  }
+
+  const nextMembers = [
+    ...members,
+    ...eligibleActors.map(memberActor => createActorReference(memberActor))
+  ];
+
+  await actor.update({ "system.members": nextMembers });
+
+  return {
+    status: "groupAdded",
+    addedCount: eligibleActors.length,
+    group: groupActor
+  };
 }
 
 export async function addActorMember(actor, candidateActor) {
@@ -51,6 +110,10 @@ export async function addActorMember(actor, candidateActor) {
 
   if (isSameActorDocument(actor, candidateActor)) {
     return { status: "self" };
+  }
+
+  if (isGroupActor(candidateActor)) {
+    return addActorMemberGroup(actor, candidateActor);
   }
 
   if (!isSupportedMemberActor(candidateActor)) {

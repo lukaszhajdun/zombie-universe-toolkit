@@ -76,6 +76,8 @@
         "UnknownName": "Nieznany aktor",
         "MissingActorLabel": "Nie znaleziono aktora",
         "Notifications": {
+          "GroupAdded": "Dozwoleni członkowie grupy zostali dodani.",
+          "GroupNoEligible": "Ta grupa nie ma kwalifikujących się członków do dodania.",
           "Added": "Aktor został dodany do grupy.",
           "AlreadyAdded": "Ten aktor jest już w grupie.",
           "CannotAddSelf": "Nie możesz dodać aktora grupy do samego siebie.",
@@ -98,6 +100,8 @@
         "UnknownName": "Nieznany aktor",
         "MissingActorLabel": "Nie znaleziono aktora",
         "Notifications": {
+          "GroupAdded": "Dozwoleni członkowie grupy zostali dodani.",
+          "GroupNoEligible": "Ta grupa nie ma kwalifikujących się członków do dodania.",
           "Added": "Aktor został dodany do drużyny.",
           "AlreadyAdded": "Ten aktor jest już w drużynie.",
           "CannotAddSelf": "Nie możesz dodać aktora drużyny do samego siebie.",
