@@ -62,7 +62,11 @@ export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV
       options.window ?? {},
       {
         icon: "fa-solid fa-shapes",
-        resizable: true
+        resizable: true,
+        contentClasses: Array.from(new Set([
+          ...(options.window?.contentClasses ?? []),
+          "zut-sheet"
+        ]))
       },
       { inplace: false }
     );
@@ -250,6 +254,24 @@ export class BaseModuleActorSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     if (!element.name?.trim()) return;
     void this._onAutoSaveFieldChangeForElement(element);
+  }
+
+  _onBaseKeyDown(event) {
+    if (event.key !== "Enter") return;
+    if (event.isComposing) return;
+
+    const element = event.target;
+    if (!(element instanceof HTMLInputElement || element instanceof HTMLSelectElement)) return;
+    if (element instanceof HTMLInputElement && this._allowsEnterInputSubmit(element)) return;
+    if (!element.name?.trim()) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    element.blur();
+  }
+
+  _allowsEnterInputSubmit(element) {
+    return ["button", "checkbox", "color", "file", "hidden", "image", "radio", "reset", "submit"].includes(element.type);
   }
 
   async _onPortraitEdit(event) {

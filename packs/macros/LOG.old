@@ -1,6 +1,13 @@
-2026/04/24-23:31:50.768 95f4 Log #71: 0 ops saved to Table #72 OK
-2026/04/24-23:31:50.768 95f4 Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/000071.log: OK
-2026/04/24-23:31:50.768 95f4 Table #5: 2 entries OK
-2026/04/24-23:31:50.768 95f4 Table #53: 2 entries OK
-2026/04/24-23:31:50.769 95f4 Archiving ..\Data\modules\zombie-universe-toolkit\packs\macros/MANIFEST-000070: OK
-2026/04/24-23:31:50.772 95f4 **** Repaired leveldb ..\Data\modules\zombie-universe-toolkit\packs\macros; recovered 2 files; 1471 bytes. Some data may have been lost. ****
+2026/04/26-11:54:47.948 8fa8 Recovering log #84
+2026/04/26-11:54:47.951 8fa8 Delete type=0 #84
+2026/04/26-11:54:47.951 8fa8 Delete type=3 #83
+2026/04/26-12:13:21.493 4578 Level-0 table #88: started
+2026/04/26-12:13:21.493 4578 Level-0 table #88: 0 bytes OK
+2026/04/26-12:13:21.493 4578 Delete type=0 #86
+2026/04/26-12:13:21.495 4578 Manual compaction at level-0 from '!macros!92CWq67CCcMvwXFn' @ 72057594037927935 : 1 .. '!macros!fzFIB01sDrRn36r9' @ 0 : 0; will stop at '!macros!fzFIB01sDrRn36r9' @ 4 : 1
+2026/04/26-12:13:21.495 4578 Compacting 1@0 + 0@1 files
+2026/04/26-12:13:21.503 4578 Generated table #89@0: 2 keys, 925 bytes
+2026/04/26-12:13:21.503 4578 Compacted 1@0 + 0@1 files => 925 bytes
+2026/04/26-12:13:21.505 4578 compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/04/26-12:13:21.505 4578 Delete type=2 #77
+2026/04/26-12:13:21.511 4578 Manual compaction at level-0 from '!macros!fzFIB01sDrRn36r9' @ 4 : 1 .. '!macros!fzFIB01sDrRn36r9' @ 0 : 0; will stop at (end)

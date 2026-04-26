@@ -27,6 +27,7 @@ export class ActorRoleDnDController {
 
     root.addEventListener("click", event => sheet._onBaseClick(event), { signal });
     root.addEventListener("change", event => sheet._onBaseChange(event), { signal });
+    root.addEventListener("keydown", event => sheet._onBaseKeyDown(event), { signal, capture: true });
     root.addEventListener("dragend", event => {
       void sheet._onBaseDragEnd(event);
     }, { signal });
